@@ -1,40 +1,24 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html lang="en">
+<html>
 <head>
-    <title>jQuery Dialog</title>
-    <%--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>--%>
-    <script src="js/jquery.js"></script>
-    <%--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">--%>
-    <link rel="stylesheet" href="css/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <%--<script src="ui/jquery-ui.js"></script>--%>
-
+    <title>Create new content</title>
     <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
-</head>
 
+    <script src="js/jquery.js"></script>
+
+    <%--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>--%>
+</head>
 <body>
-<div id="dialog" title="Данные для нового таксофона">
-    <form>
-        <p><input type="text" name="tlfnum" id="tlfnum" value="41256" class="text ui-widget-content ui-corner-all"><label for="tlfnum">Тлф номер</label></p>
-        <p><input type="text" name="krdid" id="krdid" value="253" class="text ui-widget-content ui-corner-all"><label for="krdid">ID таксофона</label></p>
-        <p><input type="text" name="lon" id="lon" value="45.568" class="text ui-widget-content ui-corner-all"><label for="lon">Longitude</label></p>
-        <p><input type="text" name="lat" id="lat" value="23.432" class="text ui-widget-content ui-corner-all"><label for="lat">Latitude</label></p>
-        <p><input type="text" name="numsam" id="numsam" value="2435" class="text ui-widget-content ui-corner-all"><label for="numsam">Номер SAM модуля</label></p>
-        <p><input type="text" name="type" id="typetax" value="УТЭК" class="text ui-widget-content ui-corner-all"><label for="type">Модель</label></p>
-        <p><input type="text" name="adres" id="adres" value="Адрес установки" class="text ui-widget-content ui-corner-all"><label for="adres">Адрес</label></p>
-        <p><input type="text" name="version" id="version" value="Версия" class="text ui-widget-content ui-corner-all"><label for="version">Версия</label></p>
-        <p><button type="button" onclick="RestAddTaxofon($('#tlfnum').val(), $('#krdid').val(), $('#lon').val(), $('#lat').val(), $('#numsam').val(), $('#type').val(), $('#adres').val(), $('#version').val())">OK</button>
-            <button type="button" onclick="CloseModalForm()">CANCEL</button>
-        </p>
-    </form>
-</div>
 
 <div id="map" class="map">
     <div id="popup"></div>
 </div>
+
 <form class="form-inline">
     <label>Geometry type &nbsp;</label>
     <select id="type">
@@ -48,6 +32,7 @@
     <button type="button" onclick="AddLineStringFromBase()">Add LineString</button>
 </form>
 
+<%--<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>--%>
 <script>
     var nextid = 16;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
@@ -150,6 +135,10 @@
                 arrCoords = evt.feature.getGeometry().getCoordinates();
                 //сохраняем в базу линию и ее координаты
                 saveDrawCoordsLineStr(arrCoords, nextid);
+
+
+
+
                 /*arrCoords = evt.feature.getGeometry().getCoordinates();
                 var lengthCoords;
                 //получаем массив координат мультилинии
@@ -166,67 +155,210 @@
     };
     addInteraction();
 
-    var OpenModalForm = function () {
-        $("#dialog").dialog('open');
-    };
 
-    var CloseModalForm = function () {
-        $("#dialog").dialog('close');
-    };
+    var saveDrawCoordsLineStr = function (arrCoords, nextid) {
+        //формируем JSON для отправки на сервер
+        //получаем массив координат вершин
+        // var arrCoords = evt.feature.getGeometry().getCoordinates();
+        var arrGeometryCoord = [];
+        for (i in arrCoords) {
+            var vertexCoords = arrCoords[i];
+            var objFeatureLonLat = {
+                'longitude':vertexCoords[0],
+                'latitude':vertexCoords[1],
+                'propertyId':nextid
+            };
+            //получили массив координат вершин
+            arrGeometryCoord.push(objFeatureLonLat);
+        }
 
-    //------
-    $( function() {
-        $( "#dialog" ).dialog({
-            autoOpen: false,
-            height: 400,
-            width: 400,
-            modal: true
+        var JSONfeatureCoord = {
+            'geometryType':'LineString',
+            'propertyId':nextid,
+            'propertyName':featurePropertyName,
+            'geometryCoord':arrGeometryCoord
+        };
+        $.ajax({
+            type: 'POST',
+            url: "http://localhost:8080/featurecoord/add",
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONfeatureCoord),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('Success add FeatureCoord');
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Failed add FeatureCoord');
+            }
         });
-    } );
+    };
 
+    var saveModifyCoordLineStr = function (featuresGeoJSON) {
+        //разбираем GeoJSON
+        var arrData = JSON.parse(featuresGeoJSON);
+        console.log(arrData.type);
+        var arrFeatures = arrData.features;
+        // var objFeature = arrFeatures[0];
+        var objGeometry = arrFeatures[0].geometry;
+        var arrCoords = objGeometry.coordinates;
+        var objProperties = arrFeatures[0].properties;
 
+        console.log('idProperties='+objProperties.id + ', nameProperties='+objProperties.name);
+
+        var arrGeometryCoord = [];
+        for (i in arrCoords) {
+            var vertexCoords = arrCoords[i];
+            var objFeatureLonLat = {
+                'longitude':vertexCoords[0],
+                'latitude':vertexCoords[1],
+                'propertyId':objProperties.id
+            };
+            console.log('longitude='+vertexCoords[0]+', latitude='+vertexCoords[1]);
+            //получили массив координат вершин
+            arrGeometryCoord.push(objFeatureLonLat);
+        }
+        JSONmodifyCoord = {
+            'geometryType':'LineString',
+            'propertyId':objProperties.id,
+            'propertyName':featurePropertyName,
+            'geometryCoord':arrGeometryCoord
+        };
+    };
+
+    var SaveModifIntoBase = function () {
+        //здесь будем удалять из базы старую мультилинию с nextid и добавлять вместо нее модифицированную
+        console.log('propertyId='+JSONmodifyCoord.propertyId + ', propertyName' + JSONmodifyCoord.propertyName);
+        //получаем ID FeatureCoord
+        var idFeatureCoord;
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                idFeatureCoord = arrData[0].id;
+                console.log('idFeatureCoord='+idFeatureCoord);
+                //нашли ID FeatureCoord
+                //здесь будем удалять FeatureCoord по ID и добавлять модифицированный FeatureCoord
+                DelFeatureCoordById(idFeatureCoord);
+
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord by propertyId')
+            }
+        });
+    };
+
+    var DelFeatureCoordById = function (idFeatureCoord) {
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8080/featurecoord/delete?id=' + idFeatureCoord,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('success deleting featurecoord by Id');
+                AddModifiedFeature(JSONmodifyCoord);
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error deleting featurecoord by Id')
+            }
+        });
+    };
+
+    var AddModifiedFeature = function (JSONmodifyCoord) {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/featurecoord/add',
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONmodifyCoord),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('success add modified featurecoord');
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error add modified featurecoord');
+            }
+        });
+    };
+
+    //при нажатии на кнопку отображаем на карте все линии из базы
+    var AddLineStringFromBase = function () {
+        console.log('AddLineStringFromBase');
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/featurecoord/all',
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                //console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                for (i in arrData) {
+                    console.log('next feature:');
+                    console.log(arrData[i]);
+                    var objFeature = arrData[i];
+                    var arrGeometryCoord = objFeature.geometryCoord;
+                    var arrLineCoord = [];
+                    for (k in arrGeometryCoord){
+                        var arrPointCoord = [];
+                        var objGeomCoordItem = arrGeometryCoord[k];
+                        arrPointCoord[0] = objGeomCoordItem.longitude;
+                        arrPointCoord[1] = objGeomCoordItem.latitude;
+                        arrLineCoord.push(arrPointCoord);
+                        console.log('lon=' + objGeomCoordItem.longitude + ', lat=' + objGeomCoordItem.latitude);
+                    }
+                    var linestring_feature = new ol.Feature({
+                        geometry: new ol.geom.LineString(
+                            arrLineCoord
+                        )
+                    });
+                    vectorSource.addFeature( linestring_feature );
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord');
+            }
+        });
+
+        /*var arrStringCoords = [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]];
+        var linestring_feature = new ol.Feature({
+            geometry: new ol.geom.LineString(
+                // [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]]
+                arrStringCoords
+            )
+        });
+          vectorSource.addFeature( linestring_feature );*/
+        /*var myLinestr = new ol.geom.LineString();
+        myLinestr.appendCoordinate(4463583.262541277,5756721.0204985505);
+        myLinestr.appendCoordinate(4469306.48503413,5756931.222326335);
+        vectorSource.addFeature( myLinestr );*/
+        /*var linestring_feature = new ol.Feature({
+            geometry: new ol.geom.LineString(
+                [[4466646.416733378,5756930.625162051],[4466801.679447082,5757077.527575786]]
+            )
+        });
+        vectorSource.addFeature( linestring_feature );
+        linestring_feature = new ol.Feature({
+            geometry: new ol.geom.LineString(
+                [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]]
+            )
+        });
+        vectorSource.addFeature( linestring_feature );*/
+        // var geojsonObject = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[4466646.416733378,5756930.625162051],[4466801.679447082,5757077.527575786]]},"properties":{"id":1,"name":"myCable1"}}]};
+        // vectorSource.addFeature((new ol.format.GeoJSON()).readFeatures(geojsonObject));
+        /*var source2 = new ol.source.Vector({
+            features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+        });
+        var layer2 = new ol.layer.Vector({
+            source: source2
+        });*/
+    };
 </script>
-<%--<body>
-<div id="dialog" title="Данные для нового таксофона">
-    <form>
-        <p><input type="text" name="tlfnum" id="tlfnum" value="41256" class="text ui-widget-content ui-corner-all"><label for="tlfnum">Тлф номер</label></p>
-        <p><input type="text" name="krdid" id="krdid" value="253" class="text ui-widget-content ui-corner-all"><label for="krdid">ID таксофона</label></p>
-        <p><input type="text" name="lon" id="lon" value="45.568" class="text ui-widget-content ui-corner-all"><label for="lon">Longitude</label></p>
-        <p><input type="text" name="lat" id="lat" value="23.432" class="text ui-widget-content ui-corner-all"><label for="lat">Latitude</label></p>
-        <p><input type="text" name="numsam" id="numsam" value="2435" class="text ui-widget-content ui-corner-all"><label for="numsam">Номер SAM модуля</label></p>
-        <p><input type="text" name="type" id="type" value="УТЭК" class="text ui-widget-content ui-corner-all"><label for="type">Модель</label></p>
-        <p><input type="text" name="adres" id="adres" value="Адрес установки" class="text ui-widget-content ui-corner-all"><label for="adres">Адрес</label></p>
-        <p><input type="text" name="version" id="version" value="Версия" class="text ui-widget-content ui-corner-all"><label for="version">Версия</label></p>
-        <p><button type="button" onclick="RestAddTaxofon($('#tlfnum').val(), $('#krdid').val(), $('#lon').val(), $('#lat').val(), $('#numsam').val(), $('#type').val(), $('#adres').val(), $('#version').val())">OK</button>
-            <button type="button" onclick="CloseModalForm()">CANCEL</button>
-        </p>
-    </form>
-</div>
-
-<div id="map" class="map">
-    <div id="popup"></div>
-</div>--%>
-
-<%--<div class="container">
-    <div class="panel">
-        <div class="panel-heading"><strong>Неисправности Таксофонов</strong></div>
-        <div class="panel-body">
-            <table class="table-row-cell">
-                <tr>
-                    <th>Открыть заявку</th>
-                    <th> <input id="idDamagedTaxofon" value="ID"> </th>
-                    <th id="selectTypeDamage"></th>
-                    <th>Дата: <input type="text" id="datepicker" size="30"></th>
-                    <th>Время: <input id="timecurrent" type="text"></th>
-                    <th><button type="button" onclick="OpenModalForm()">OK</button></th>
-                    &lt;%&ndash;<th><button type="button" onclick="GetTaxofonById($('#idDamagedTaxofon').val())">OK</button></th>&ndash;%&gt;
-                </tr>
-
-               </table>
-        </div>
-    </div>
-</div>--%>
-
 
 </body>
 </html>
