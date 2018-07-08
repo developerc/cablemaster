@@ -6,19 +6,11 @@
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
-
-    <script src="js/jquery.js"></script>
-
-    <%--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>--%>
 </head>
 <body>
-
 <div id="map" class="map">
     <div id="popup"></div>
 </div>
-
 <form class="form-inline">
     <label>Geometry type &nbsp;</label>
     <select id="type">
@@ -32,9 +24,9 @@
     <button type="button" onclick="AddLineStringFromBase()">Add LineString</button>
 </form>
 
-<%--<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>--%>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script>
-    var nextid = 16;             //счетчик уникального ID для карты (propertyId)
+    var nextid = 7;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
     var featurePropertyName = 'volsCable1';
     var raster = new ol.layer.Tile({
@@ -135,10 +127,6 @@
                 arrCoords = evt.feature.getGeometry().getCoordinates();
                 //сохраняем в базу линию и ее координаты
                 saveDrawCoordsLineStr(arrCoords, nextid);
-
-
-
-
                 /*arrCoords = evt.feature.getGeometry().getCoordinates();
                 var lengthCoords;
                 //получаем массив координат мультилинии
@@ -154,7 +142,6 @@
         addInteraction();
     };
     addInteraction();
-
 
     var saveDrawCoordsLineStr = function (arrCoords, nextid) {
         //формируем JSON для отправки на сервер
