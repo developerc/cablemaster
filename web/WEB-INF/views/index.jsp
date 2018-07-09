@@ -26,7 +26,8 @@
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script>
-    var nextid = 7;             //счетчик уникального ID для карты (propertyId)
+    var service = 'http://localhost:8080/';
+    var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
     var featurePropertyName = 'volsCable1';
     var raster = new ol.layer.Tile({
@@ -143,6 +144,7 @@
     };
     addInteraction();
 
+
     var saveDrawCoordsLineStr = function (arrCoords, nextid) {
         //формируем JSON для отправки на сервер
         //получаем массив координат вершин
@@ -167,13 +169,15 @@
         };
         $.ajax({
             type: 'POST',
-            url: "http://localhost:8080/featurecoord/add",
+            url: service + "featurecoord/add",
             contentType: 'application/json;charset=utf-8',
             data: JSON.stringify(JSONfeatureCoord),
             dataType: 'json',
             async: false,
             success: function (result) {
                 console.log('Success add FeatureCoord');
+                //увеличиваем на 1 счетчик Features
+                IncrFeatureNextId();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('Failed add FeatureCoord');
@@ -220,7 +224,7 @@
         var idFeatureCoord;
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8080/featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
+            url: service + 'featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -243,7 +247,7 @@
     var DelFeatureCoordById = function (idFeatureCoord) {
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8080/featurecoord/delete?id=' + idFeatureCoord,
+            url: service + 'featurecoord/delete?id=' + idFeatureCoord,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -259,7 +263,7 @@
     var AddModifiedFeature = function (JSONmodifyCoord) {
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8080/featurecoord/add',
+            url: service + 'featurecoord/add',
             contentType: 'application/json;charset=utf-8',
             data: JSON.stringify(JSONmodifyCoord),
             dataType: 'json',
@@ -278,7 +282,7 @@
         console.log('AddLineStringFromBase');
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8080/featurecoord/all',
+            url: service + 'featurecoord/all',
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -311,6 +315,7 @@
                 console.log('error getting featurecoord');
             }
         });
+
 
         /*var arrStringCoords = [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]];
         var linestring_feature = new ol.Feature({
@@ -345,6 +350,108 @@
             source: source2
         });*/
     };
+
+    var IncrFeatureNextId = function () {
+      //увеличиваем на 1 nextid
+      $.ajax({
+          type: 'GET',
+          url: service + 'featurenextid/all',
+          dataType: 'json',
+          async: false,
+          success: function (result) {
+              var stringData = JSON.stringify(result);
+              console.log(stringData);
+              var arrData = JSON.parse(stringData);
+              if(arrData.length > 1){
+                  console.log('error FeatureNextId table row count');
+              } else {
+                  var objNextId = {};
+                  objNextId = arrData[0];
+                  UpdFeatureNextId(objNextId);
+              }
+          },
+          error: function (jqXHR, testStatus, errorThrown) {
+              console.log('Failed increment FeatureNextId');
+          }
+      });
+    };
+
+    var UpdFeatureNextId = function (objNextId) {
+        var incrementNextId = objNextId.nextId + 1;
+        objNextId.nextId = incrementNextId;
+        console.log('incrementNextId=' + incrementNextId);
+        $.ajax({
+            type: 'PUT',
+            url: service + "featurenextid/upd",
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(objNextId),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('Success update FeatureNextId');
+                nextid = incrementNextId;
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Failed update FeatureNextId');
+            }
+        });
+    };
+
+    var AddFeatureNextId = function () {
+        console.log('table FeatureNextId is empty')
+        var JSONfeatureNextId = {
+            'nextId':0
+        };
+        $.ajax({
+            type: 'POST',
+            url: service + "featurenextid/add",
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONfeatureNextId),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('Success add FeatureNextId');
+                nextid = 0;
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Failed add FeatureNextId');
+            }
+        });
+    };
+
+    //устанавливаем переменную для номера следующей Feature
+    var SetFeatureNextId = function () {
+        console.log('SetFeatureNextId');
+        $.ajax({
+            type: 'GET',
+            url: service + 'featurenextid/all',
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                if(arrData.length == 0){
+                    AddFeatureNextId();
+                } else {
+                    // GetFeatureNextId();
+                    console.log('table FeatureNextId is not empty');
+                    if(arrData.length > 1){
+                        console.log('error FeatureNextId table row count');
+                    } else {
+                        var objNextId = {};
+                        objNextId = arrData[0];
+                        nextid = objNextId.nextId;
+                        console.log('nextid=' + nextid);
+                    }
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurenextid');
+            }
+        });
+    };
+    SetFeatureNextId();
 </script>
 
 </body>
