@@ -152,11 +152,29 @@
         var arrGeometryCoord = [];
         for (i in arrCoords) {
             var vertexCoords = arrCoords[i];
-            var objFeatureLonLat = {
-                'longitude':vertexCoords[0],
-                'latitude':vertexCoords[1],
-                'propertyId':nextid
-            };
+            if (i == 0) {
+                var objFeatureLonLat = {
+                    'longitude': vertexCoords[0],
+                    'latitude': vertexCoords[1],
+                    'propertyId': nextid,
+                    'featureBegin': true
+                };
+            } else {
+                if (i == (arrCoords.length - 1)) {
+                    var objFeatureLonLat = {
+                        'longitude': vertexCoords[0],
+                        'latitude': vertexCoords[1],
+                        'propertyId': nextid,
+                        'featureEnd': true
+                    };
+                } else {
+                    var objFeatureLonLat = {
+                        'longitude': vertexCoords[0],
+                        'latitude': vertexCoords[1],
+                        'propertyId': nextid
+                    };
+                }
+            }
             //получили массив координат вершин
             arrGeometryCoord.push(objFeatureLonLat);
         }
@@ -200,11 +218,34 @@
         var arrGeometryCoord = [];
         for (i in arrCoords) {
             var vertexCoords = arrCoords[i];
-            var objFeatureLonLat = {
+            if (i == 0) {
+                var objFeatureLonLat = {
+                    'longitude': vertexCoords[0],
+                    'latitude': vertexCoords[1],
+                    'propertyId':objProperties.id,
+                    'featureBegin': true
+                };
+            } else {
+                if (i == (arrCoords.length - 1)) {
+                    var objFeatureLonLat = {
+                        'longitude': vertexCoords[0],
+                        'latitude': vertexCoords[1],
+                        'propertyId':objProperties.id,
+                        'featureEnd': true
+                    };
+                } else {
+                    var objFeatureLonLat = {
+                        'longitude': vertexCoords[0],
+                        'latitude': vertexCoords[1],
+                        'propertyId':objProperties.id
+                    };
+                }
+            }
+            /*var objFeatureLonLat = {
                 'longitude':vertexCoords[0],
                 'latitude':vertexCoords[1],
                 'propertyId':objProperties.id
-            };
+            };*/
             console.log('longitude='+vertexCoords[0]+', latitude='+vertexCoords[1]);
             //получили массив координат вершин
             arrGeometryCoord.push(objFeatureLonLat);
