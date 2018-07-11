@@ -29,6 +29,9 @@
     var service = 'http://localhost:8080/';
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
+    var lastModFeatureJSON = {};   //последняя модифицированная FeatureCollection в слое
+    var lastDrawFeatureJSON = {};  //последняя добавленная FeatureCollection в слое
+    var lastModNotDraw = false;    //последний раз модифицировали а не рисовали
     var featurePropertyName = 'volsCable1';
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()
@@ -69,8 +72,7 @@
         //layers: [raster, layer2, vector],
         layers: [raster,
             new ol.layer.Vector({
-                source: vectorSource
-            }),
+                source: vectorSource}),
             vector],
         target: 'map',
         /*view: new ol.View({
@@ -101,6 +103,8 @@
                 var parser = new ol.format.GeoJSON();
                 var features = source.getFeatures();
                 var featuresGeoJSON = parser.writeFeatures(features);
+                lastModFeatureJSON = featuresGeoJSON;
+                lastModNotDraw = true;
 
                 console.log('modifyend:');
                 console.log(featuresGeoJSON);
@@ -120,6 +124,9 @@
                 var parser = new ol.format.GeoJSON();
                 var features = source.getFeatures();
                 var featuresGeoJSON = parser.writeFeatures(features);
+                lastDrawFeatureJSON = evt.feature.getProperties();
+                lastModNotDraw = false;
+
                 console.log('drawend:');
                 console.log(featuresGeoJSON);
                 console.log(evt.feature.getGeometry().getCoordinates(), evt.feature.getProperties());
@@ -311,6 +318,7 @@
             async: false,
             success: function (result) {
                 console.log('success add modified featurecoord');
+
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error add modified featurecoord');
