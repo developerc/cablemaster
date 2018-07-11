@@ -22,6 +22,8 @@
 
     <button type="button" onclick="SaveModifIntoBase()">Save Modified</button>
     <button type="button" onclick="AddLineStringFromBase()">Add LineString</button>
+    <label>propertyName &nbsp;</label>
+    <input type="text" id="propertyname" size="30">
 </form>
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -29,9 +31,10 @@
     var service = 'http://localhost:8080/';
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
-    var lastModFeatureJSON = {};   //последняя модифицированная FeatureCollection в слое
+    /*var lastModFeatureJSON = {};   //последняя модифицированная FeatureCollection в слое
     var lastDrawFeatureJSON = {};  //последняя добавленная FeatureCollection в слое
     var lastModNotDraw = false;    //последний раз модифицировали а не рисовали
+    */
     var featurePropertyName = 'volsCable1';
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()
@@ -103,8 +106,8 @@
                 var parser = new ol.format.GeoJSON();
                 var features = source.getFeatures();
                 var featuresGeoJSON = parser.writeFeatures(features);
-                lastModFeatureJSON = featuresGeoJSON;
-                lastModNotDraw = true;
+                // lastModFeatureJSON = featuresGeoJSON;
+                // lastModNotDraw = true;
 
                 console.log('modifyend:');
                 console.log(featuresGeoJSON);
@@ -124,8 +127,8 @@
                 var parser = new ol.format.GeoJSON();
                 var features = source.getFeatures();
                 var featuresGeoJSON = parser.writeFeatures(features);
-                lastDrawFeatureJSON = evt.feature.getProperties();
-                lastModNotDraw = false;
+                // lastDrawFeatureJSON = evt.feature.getProperties();
+                // lastModNotDraw = false;
 
                 console.log('drawend:');
                 console.log(featuresGeoJSON);
@@ -164,6 +167,7 @@
                     'longitude': vertexCoords[0],
                     'latitude': vertexCoords[1],
                     'propertyId': nextid,
+                    'propertyName': $("#propertyname").val(),
                     'featureBegin': true
                 };
             } else {
@@ -172,12 +176,14 @@
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
                         'propertyId': nextid,
+                        'propertyName': $("#propertyname").val(),
                         'featureEnd': true
                     };
                 } else {
                     var objFeatureLonLat = {
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
+                        'propertyName': $("#propertyname").val(),
                         'propertyId': nextid
                     };
                 }
@@ -189,7 +195,8 @@
         var JSONfeatureCoord = {
             'geometryType':'LineString',
             'propertyId':nextid,
-            'propertyName':featurePropertyName,
+            // 'propertyName':featurePropertyName,
+            'propertyName': $("#propertyname").val(),
             'geometryCoord':arrGeometryCoord
         };
         $.ajax({
@@ -230,6 +237,7 @@
                     'longitude': vertexCoords[0],
                     'latitude': vertexCoords[1],
                     'propertyId':objProperties.id,
+                    'propertyName': $("#propertyname").val(),
                     'featureBegin': true
                 };
             } else {
@@ -238,12 +246,14 @@
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
                         'propertyId':objProperties.id,
+                        'propertyName': $("#propertyname").val(),
                         'featureEnd': true
                     };
                 } else {
                     var objFeatureLonLat = {
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
+                        'propertyName': $("#propertyname").val(),
                         'propertyId':objProperties.id
                     };
                 }
@@ -318,7 +328,8 @@
             async: false,
             success: function (result) {
                 console.log('success add modified featurecoord');
-
+                source.clear();
+                AddLineStringFromBase();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error add modified featurecoord');
