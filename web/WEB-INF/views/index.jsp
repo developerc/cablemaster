@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Create new content</title>
+    <title>Cable Master</title>
     <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
@@ -14,8 +14,8 @@
 <form class="form-inline">
     <label>Geometry type &nbsp;</label>
     <select id="type">
-        <option value="Point">Point</option>
         <option value="LineString">LineString</option>
+        <option value="Point">Point</option>
         <option value="Polygon">Polygon</option>
         <option value="Circle">Circle</option>
     </select>
@@ -137,7 +137,13 @@
                 //получаем массив координат вершин мультилинии
                 arrCoords = evt.feature.getGeometry().getCoordinates();
                 //сохраняем в базу линию и ее координаты
-                saveDrawCoordsLineStr(arrCoords, nextid);
+                if (typeSelect.value == 'LineString') {
+                    saveDrawCoordsLineStr(arrCoords, nextid);
+                }
+                if (typeSelect.value == 'Point') {
+                    saveDrawCoordsPoint(arrCoords, nextid);
+                }
+
                 /*arrCoords = evt.feature.getGeometry().getCoordinates();
                 var lengthCoords;
                 //получаем массив координат мультилинии
@@ -154,6 +160,42 @@
     };
     addInteraction();
 
+    var saveDrawCoordsPoint = function (arrCoords, nextid) {
+        //формируем JSON точки для отправки на сервер
+        var arrGeometryCoord = [];
+        // var vertexCoords = arrCoords[0];
+        var objFeatureLonLat = {
+            'longitude': arrCoords[0],
+            'latitude': arrCoords[1],
+            'propertyName': $("#propertyname").val(),
+            'propertyId': nextid
+        };
+        //получили массив координат вершин
+        arrGeometryCoord.push(objFeatureLonLat);
+
+        var JSONfeatureCoord = {
+            'geometryType':'Point',
+            'propertyId':nextid,
+            'propertyName': $("#propertyname").val(),
+            'geometryCoord':arrGeometryCoord
+        };
+        $.ajax({
+            type: 'POST',
+            url: service + "featurecoord/add",
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONfeatureCoord),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('Success add FeatureCoord');
+                //увеличиваем на 1 счетчик Features
+                IncrFeatureNextId();
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Failed add FeatureCoord');
+            }
+        });
+    };
 
     var saveDrawCoordsLineStr = function (arrCoords, nextid) {
         //формируем JSON для отправки на сервер
@@ -412,28 +454,28 @@
     };
 
     var IncrFeatureNextId = function () {
-      //увеличиваем на 1 nextid
-      $.ajax({
-          type: 'GET',
-          url: service + 'featurenextid/all',
-          dataType: 'json',
-          async: false,
-          success: function (result) {
-              var stringData = JSON.stringify(result);
-              console.log(stringData);
-              var arrData = JSON.parse(stringData);
-              if(arrData.length > 1){
-                  console.log('error FeatureNextId table row count');
-              } else {
-                  var objNextId = {};
-                  objNextId = arrData[0];
-                  UpdFeatureNextId(objNextId);
-              }
-          },
-          error: function (jqXHR, testStatus, errorThrown) {
-              console.log('Failed increment FeatureNextId');
-          }
-      });
+        //увеличиваем на 1 nextid
+        $.ajax({
+            type: 'GET',
+            url: service + 'featurenextid/all',
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                if(arrData.length > 1){
+                    console.log('error FeatureNextId table row count');
+                } else {
+                    var objNextId = {};
+                    objNextId = arrData[0];
+                    UpdFeatureNextId(objNextId);
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Failed increment FeatureNextId');
+            }
+        });
     };
 
     var UpdFeatureNextId = function (objNextId) {
