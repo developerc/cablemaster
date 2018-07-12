@@ -61,6 +61,24 @@
     });
 
     var vectorSource = new ol.source.Vector({});
+    var layer2 = new ol.layer.Vector({
+        source: vectorSource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255, 255, 255, 0.2)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#3428ff',
+                width: 2
+            }),
+            image: new ol.style.Circle({
+                radius: 7,
+                fill: new ol.style.Fill({
+                    color: '#3428ff'
+                })
+            })
+        })
+    });
 
     //--добавим слой с готовыми линиями
     /*var geojsonObject = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[4466646.416733378,5756930.625162051],[4466801.679447082,5757077.527575786]]},"properties":{"id":1,"name":"myCable1"}}]};
@@ -74,8 +92,9 @@
     var map = new ol.Map({
         //layers: [raster, layer2, vector],
         layers: [raster,
-            new ol.layer.Vector({
-                source: vectorSource}),
+            /*new ol.layer.Vector({
+                source: vectorSource}),*/
+            layer2,
             vector],
         target: 'map',
         /*view: new ol.View({
@@ -395,6 +414,7 @@
                     console.log('next feature:');
                     console.log(arrData[i]);
                     var objFeature = arrData[i];
+                    var geomType = objFeature.geometryType;
                     var arrGeometryCoord = objFeature.geometryCoord;
                     var arrLineCoord = [];
                     for (k in arrGeometryCoord){
@@ -405,12 +425,26 @@
                         arrLineCoord.push(arrPointCoord);
                         console.log('lon=' + objGeomCoordItem.longitude + ', lat=' + objGeomCoordItem.latitude);
                     }
-                    var linestring_feature = new ol.Feature({
-                        geometry: new ol.geom.LineString(
-                            arrLineCoord
-                        )
-                    });
-                    vectorSource.addFeature( linestring_feature );
+
+                    if (geomType == 'LineString') {
+                        var linestring_feature = new ol.Feature({
+                            geometry: new ol.geom.LineString(
+                                arrLineCoord
+                            )
+                        });
+                        vectorSource.addFeature(linestring_feature);
+                        console.log('это LineString');
+                    }
+
+                    if (geomType == 'Point'){
+                        var point_feature = new ol.Feature({
+                           geometry: new ol.geom.Point(
+                               arrPointCoord
+                           )
+                        });
+                        vectorSource.addFeature(point_feature);
+                        console.log('это Point');
+                    }
                 }
             },
             error: function (jqXHR, testStatus, errorThrown) {
