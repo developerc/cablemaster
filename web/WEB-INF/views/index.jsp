@@ -76,6 +76,15 @@
                 fill: new ol.style.Fill({
                     color: '#3428ff'
                 })
+            }),
+            text: new ol.style.Text({
+                font: '12px Calibri,sans-serif',
+                fill: new ol.style.Fill({ color: '#000' }),
+                stroke: new ol.style.Stroke({
+                    color: '#fff', width: 2
+                }),
+                text: 'proba'//,
+                //textBaseline: 'Middle'
             })
         })
     });
@@ -442,6 +451,7 @@
                                 arrLineCoord
                             )
                         });
+
                         vectorSource.addFeature(linestring_feature);
                         console.log('это LineString');
                     }
