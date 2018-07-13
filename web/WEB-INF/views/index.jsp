@@ -121,17 +121,16 @@
         map.addInteraction(draw);
         modify.on('modifyend',
             function (evt) {
-                // console.log(evt.feature);
                 var parser = new ol.format.GeoJSON();
                 var features = source.getFeatures();
                 var featuresGeoJSON = parser.writeFeatures(features);
-                // lastModFeatureJSON = featuresGeoJSON;
-                // lastModNotDraw = true;
 
                 console.log('modifyend:');
                 console.log(featuresGeoJSON);
 
                 saveModifyCoordLineStr(featuresGeoJSON);
+
+
                 // console.log(evt.feature.getGeometry().getCoordinates(), evt.feature.getProperties());
                 // console.log(evt.feature.getProperties());
             }, this);
@@ -139,7 +138,7 @@
             function(evt) {
                 evt.feature.setProperties({
                     'id' : nextid,
-                    'name':featurePropertyName
+                    'name':$("#propertyname").val()
                 });
 
                 // console.log(evt.feature);
@@ -169,7 +168,7 @@
                 lengthCoords = arrCoords.length;
                 console.log('lengthCoords='+lengthCoords);*/
 
-                nextid++;
+                // nextid++;
             },
             this);
     }
@@ -288,50 +287,61 @@
         var arrCoords = objGeometry.coordinates;
         var objProperties = arrFeatures[0].properties;
 
-        console.log('idProperties='+objProperties.id + ', nameProperties='+objProperties.name);
+        console.log('idProperties='+objProperties.id + ', nameProperties='+objProperties.name + ', type=' + objGeometry.type);
 
         var arrGeometryCoord = [];
-        for (i in arrCoords) {
-            var vertexCoords = arrCoords[i];
-            if (i == 0) {
-                var objFeatureLonLat = {
-                    'longitude': vertexCoords[0],
-                    'latitude': vertexCoords[1],
-                    'propertyId':objProperties.id,
-                    'propertyName': $("#propertyname").val(),
-                    'featureBegin': true
-                };
-            } else {
-                if (i == (arrCoords.length - 1)) {
+        if (objGeometry.type == 'LineString') {
+            for (i in arrCoords) {
+                var vertexCoords = arrCoords[i];
+                if (i == 0) {
                     var objFeatureLonLat = {
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
-                        'propertyId':objProperties.id,
+                        'propertyId': objProperties.id,
                         'propertyName': $("#propertyname").val(),
-                        'featureEnd': true
+                        'featureBegin': true
                     };
                 } else {
-                    var objFeatureLonLat = {
-                        'longitude': vertexCoords[0],
-                        'latitude': vertexCoords[1],
-                        'propertyName': $("#propertyname").val(),
-                        'propertyId':objProperties.id
-                    };
+                    if (i == (arrCoords.length - 1)) {
+                        var objFeatureLonLat = {
+                            'longitude': vertexCoords[0],
+                            'latitude': vertexCoords[1],
+                            'propertyId': objProperties.id,
+                            'propertyName': $("#propertyname").val(),
+                            'featureEnd': true
+                        };
+                    } else {
+                        var objFeatureLonLat = {
+                            'longitude': vertexCoords[0],
+                            'latitude': vertexCoords[1],
+                            'propertyName': $("#propertyname").val(),
+                            'propertyId': objProperties.id
+                        };
+                    }
                 }
+                console.log('модифицируем LineString')
+                console.log('longitude=' + vertexCoords[0] + ', latitude=' + vertexCoords[1] + ', propertyId=' + objProperties.id);
+                //получили массив координат вершин
+                arrGeometryCoord.push(objFeatureLonLat);
             }
-            /*var objFeatureLonLat = {
-                'longitude':vertexCoords[0],
-                'latitude':vertexCoords[1],
-                'propertyId':objProperties.id
-            };*/
-            console.log('longitude='+vertexCoords[0]+', latitude='+vertexCoords[1]);
+        }
+
+        if (objGeometry.type == 'Point'){
+            var objFeatureLonLat = {
+                'longitude': arrCoords[0],
+                'latitude': arrCoords[1],
+                'propertyName': $("#propertyname").val(),
+                'propertyId': objProperties.id
+            };
+            console.log('модифицируем Point')
+            console.log('longitude=' + arrCoords[0] + ', latitude=' + arrCoords[1] + ', propertyId=' + objProperties.id);
             //получили массив координат вершин
             arrGeometryCoord.push(objFeatureLonLat);
-        }
+                    }
         JSONmodifyCoord = {
-            'geometryType':'LineString',
+            'geometryType':objGeometry.type,
             'propertyId':objProperties.id,
-            'propertyName':featurePropertyName,
+            'propertyName':$("#propertyname").val(),
             'geometryCoord':arrGeometryCoord
         };
     };
