@@ -12,18 +12,22 @@
     <div id="popup"></div>
 </div>
 <form class="form-inline">
-    <label>Geometry type &nbsp;</label>
+    <%--<label>Geometry type &nbsp;</label>--%>
     <select id="type">
         <option value="LineString">LineString</option>
         <option value="Point">Point</option>
-        <option value="Polygon">Polygon</option>
-        <option value="Circle">Circle</option>
+        <%--<option value="Polygon">Polygon</option>
+        <option value="Circle">Circle</option>--%>
     </select>
 
     <button type="button" onclick="SaveModifIntoBase()">Save Modified</button>
     <button type="button" onclick="AddLineStringFromBase()">Add LineString</button>
-    <label>propertyName &nbsp;</label>
+    <label>propertyName:</label>
     <input type="text" id="propertyname" size="30">
+    <label id="labelNextId">nextid=0</label>
+    <label>Удалить по propertyId:</label>
+    <input type="text" id="nextidid" size="10">
+    <button type="button" onclick="DelFeatureByPropertyId()">Delete</button>
 </form>
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -76,7 +80,7 @@
                 fill: new ol.style.Fill({
                     color: '#3428ff'
                 })
-            }),
+            })/*,
             text: new ol.style.Text({
                 font: '12px Calibri,sans-serif',
                 fill: new ol.style.Fill({ color: '#000' }),
@@ -85,7 +89,7 @@
                 }),
                 text: 'proba'//,
                 //textBaseline: 'Middle'
-            })
+            })*/
         })
     });
 
@@ -398,6 +402,44 @@
         });
     };
 
+    var DelFeatureByPropertyId = function () {
+        var idFeatureCoord;
+        console.log('удаляем Feature по propertyId=' + $("#nextidid").val());
+        $.ajax({
+            type: 'GET',
+            url: service + 'featurecoord/get/propertyid/' + $("#nextidid").val(),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                idFeatureCoord = arrData[0].id;
+                DelFeatCoorById(idFeatureCoord);
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error deleting featurecoord by propertyId')
+            }
+        });
+    };
+
+    var DelFeatCoorById = function (idFeatureCoord) {
+        $.ajax({
+            type: 'DELETE',
+            url: service + 'featurecoord/delete?id=' + idFeatureCoord,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('success deleting featurecoord by Id');
+                vectorSource.clear();
+                AddLineStringFromBase();
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error deleting featurecoord by Id')
+            }
+        });
+    };
+
     var AddModifiedFeature = function (JSONmodifyCoord) {
         $.ajax({
             type: 'POST',
@@ -546,6 +588,7 @@
             success: function (result) {
                 console.log('Success update FeatureNextId');
                 nextid = incrementNextId;
+                $("#labelNextId").text("nextid=" + incrementNextId);
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('Failed update FeatureNextId');
