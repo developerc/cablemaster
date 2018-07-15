@@ -66,7 +66,7 @@
 
     var vectorSource = new ol.source.Vector({});
     var layer2 = new ol.layer.Vector({
-        source: vectorSource,
+        source: vectorSource/*,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
                 color: 'rgba(255, 255, 255, 0.2)'
@@ -80,7 +80,7 @@
                 fill: new ol.style.Fill({
                     color: '#3428ff'
                 })
-            })/*,
+            }),
             text: new ol.style.Text({
                 font: '12px Calibri,sans-serif',
                 fill: new ol.style.Fill({ color: '#000' }),
@@ -89,9 +89,38 @@
                 }),
                 text: 'proba'//,
                 //textBaseline: 'Middle'
-            })*/
-        })
+            })
+        })*/
     });
+
+    var styleFunction = function () {
+      return[
+          new ol.style.Style({
+              fill: new ol.style.Fill({
+                  color: 'rgba(255, 255, 255, 0.2)'
+              }),
+              stroke: new ol.style.Stroke({
+                  color: '#3428ff',
+                  width: 2
+              }),
+              image: new ol.style.Circle({
+                  radius: 7,
+                  fill: new ol.style.Fill({
+                      color: '#3428ff'
+                  })
+              }),
+              text: new ol.style.Text({
+                  font: '12px Calibri,sans-serif',
+                  fill: new ol.style.Fill({ color: '#000' }),
+                  stroke: new ol.style.Stroke({
+                      color: '#fff', width: 2
+                  }),
+                  text: featurePropertyName//,
+                  //textBaseline: 'Middle'
+              })
+          })
+      ]
+    };
 
     //--добавим слой с готовыми линиями
     /*var geojsonObject = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[4466646.416733378,5756930.625162051],[4466801.679447082,5757077.527575786]]},"properties":{"id":1,"name":"myCable1"}}]};
@@ -494,6 +523,8 @@
                             )
                         });
 
+                        featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                        linestring_feature.setStyle(styleFunction());
                         vectorSource.addFeature(linestring_feature);
                         console.log('это LineString');
                     }
@@ -504,6 +535,8 @@
                                arrPointCoord
                            )
                         });
+                        featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                        point_feature.setStyle(styleFunction());
                         vectorSource.addFeature(point_feature);
                         console.log('это Point');
                     }
