@@ -22,12 +22,16 @@
 
     <button type="button" onclick="SaveModifIntoBase()">Save Modified</button>
     <button type="button" onclick="AddLineStringFromBase()">Add LineString</button>
+        <input type="text" id="propertyname" size="30">
+        <button type="button" onclick="AddPropertyNameIntoBase()">Добавить propertyName</button>
     <label>propertyName:</label>
-    <input type="text" id="propertyname" size="30">
-    <label id="labelNextId">nextid=0</label>
+        <select id="propName"></select>
+        <label id="labelNextId">nextid=0</label>
     <label>Удалить по propertyId:</label>
     <input type="text" id="nextidid" size="10">
     <button type="button" onclick="DelFeatureByPropertyId()">Delete</button>
+        <label>Показывать propertyName:</label>
+        <input type="checkbox" name="cb1" id="check1" value="1" checked />
 </form>
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -39,7 +43,7 @@
     var lastDrawFeatureJSON = {};  //последняя добавленная FeatureCollection в слое
     var lastModNotDraw = false;    //последний раз модифицировали а не рисовали
     */
-    var featurePropertyName = 'volsCable1';
+    var featurePropertyName = '';
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()
     });
@@ -66,31 +70,7 @@
 
     var vectorSource = new ol.source.Vector({});
     var layer2 = new ol.layer.Vector({
-        source: vectorSource/*,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255, 255, 255, 0.2)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#3428ff',
-                width: 2
-            }),
-            image: new ol.style.Circle({
-                radius: 7,
-                fill: new ol.style.Fill({
-                    color: '#3428ff'
-                })
-            }),
-            text: new ol.style.Text({
-                font: '12px Calibri,sans-serif',
-                fill: new ol.style.Fill({ color: '#000' }),
-                stroke: new ol.style.Stroke({
-                    color: '#fff', width: 2
-                }),
-                text: 'proba'//,
-                //textBaseline: 'Middle'
-            })
-        })*/
+        source: vectorSource
     });
 
     var styleFunction = function () {
@@ -115,8 +95,7 @@
                   stroke: new ol.style.Stroke({
                       color: '#fff', width: 2
                   }),
-                  text: featurePropertyName//,
-                  //textBaseline: 'Middle'
+                  text: featurePropertyName
               })
           })
       ]
@@ -180,7 +159,8 @@
             function(evt) {
                 evt.feature.setProperties({
                     'id' : nextid,
-                    'name':$("#propertyname").val()
+                    'name':$("#propName option:selected").val()
+                    // 'name':$("#propertyname").val()
                 });
 
                 // console.log(evt.feature);
@@ -227,7 +207,8 @@
         var objFeatureLonLat = {
             'longitude': arrCoords[0],
             'latitude': arrCoords[1],
-            'propertyName': $("#propertyname").val(),
+            'propertyName': $("#propName option:selected").val(),
+            //'propertyName': $("#propertyname").val(),
             'propertyId': nextid
         };
         //получили массив координат вершин
@@ -236,7 +217,8 @@
         var JSONfeatureCoord = {
             'geometryType':'Point',
             'propertyId':nextid,
-            'propertyName': $("#propertyname").val(),
+            'propertyName': $("#propName option:selected").val(),
+            // 'propertyName': $("#propertyname").val(),
             'geometryCoord':arrGeometryCoord
         };
         $.ajax({
@@ -269,7 +251,8 @@
                     'longitude': vertexCoords[0],
                     'latitude': vertexCoords[1],
                     'propertyId': nextid,
-                    'propertyName': $("#propertyname").val(),
+                    'propertyName': $("#propName option:selected").val(),
+                    //'propertyName': $("#propertyname").val(),
                     'featureBegin': true
                 };
             } else {
@@ -278,14 +261,16 @@
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
                         'propertyId': nextid,
-                        'propertyName': $("#propertyname").val(),
+                        'propertyName': $("#propName option:selected").val(),
+                        // 'propertyName': $("#propertyname").val(),
                         'featureEnd': true
                     };
                 } else {
                     var objFeatureLonLat = {
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
-                        'propertyName': $("#propertyname").val(),
+                        'propertyName': $("#propName option:selected").val(),
+                        // 'propertyName': $("#propertyname").val(),
                         'propertyId': nextid
                     };
                 }
@@ -298,7 +283,8 @@
             'geometryType':'LineString',
             'propertyId':nextid,
             // 'propertyName':featurePropertyName,
-            'propertyName': $("#propertyname").val(),
+            'propertyName': $("#propName option:selected").val(),
+            // 'propertyName': $("#propertyname").val(),
             'geometryCoord':arrGeometryCoord
         };
         $.ajax({
@@ -340,7 +326,8 @@
                         'longitude': vertexCoords[0],
                         'latitude': vertexCoords[1],
                         'propertyId': objProperties.id,
-                        'propertyName': $("#propertyname").val(),
+                        'propertyName': $("#propName option:selected").val(),
+                        // 'propertyName': $("#propertyname").val(),
                         'featureBegin': true
                     };
                 } else {
@@ -349,14 +336,16 @@
                             'longitude': vertexCoords[0],
                             'latitude': vertexCoords[1],
                             'propertyId': objProperties.id,
-                            'propertyName': $("#propertyname").val(),
+                            'propertyName': $("#propName option:selected").val(),
+                            // 'propertyName': $("#propertyname").val(),
                             'featureEnd': true
                         };
                     } else {
                         var objFeatureLonLat = {
                             'longitude': vertexCoords[0],
                             'latitude': vertexCoords[1],
-                            'propertyName': $("#propertyname").val(),
+                            'propertyName': $("#propName option:selected").val(),
+                            // 'propertyName': $("#propertyname").val(),
                             'propertyId': objProperties.id
                         };
                     }
@@ -372,7 +361,8 @@
             var objFeatureLonLat = {
                 'longitude': arrCoords[0],
                 'latitude': arrCoords[1],
-                'propertyName': $("#propertyname").val(),
+                'propertyName': $("#propName option:selected").val(),
+                // 'propertyName': $("#propertyname").val(),
                 'propertyId': objProperties.id
             };
             console.log('модифицируем Point')
@@ -383,7 +373,8 @@
         JSONmodifyCoord = {
             'geometryType':objGeometry.type,
             'propertyId':objProperties.id,
-            'propertyName':$("#propertyname").val(),
+            'propertyName':$("#propName option:selected").val(),
+            // 'propertyName':$("#propertyname").val(),
             'geometryCoord':arrGeometryCoord
         };
     };
@@ -523,7 +514,11 @@
                             )
                         });
 
-                        featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                        if($('#check1').prop('checked')) {
+                            featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                        } else {
+                            featurePropertyName = '';
+                        }
                         linestring_feature.setStyle(styleFunction());
                         vectorSource.addFeature(linestring_feature);
                         console.log('это LineString');
@@ -535,7 +530,11 @@
                                arrPointCoord
                            )
                         });
+                        if($('#check1').prop('checked')) {
                         featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                        } else {
+                            featurePropertyName = '';
+                        }
                         point_feature.setStyle(styleFunction());
                         vectorSource.addFeature(point_feature);
                         console.log('это Point');
@@ -547,7 +546,7 @@
             }
         });
 
-
+        // console.log('выбрано propName=' + $("#propName option:selected").val());
         /*var arrStringCoords = [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]];
         var linestring_feature = new ol.Feature({
             geometry: new ol.geom.LineString(
@@ -684,6 +683,53 @@
         });
     };
     SetFeatureNextId();
+
+    var SetSelectOptions = function () {
+        console.log('SetSelectOptions');
+        $.ajax({
+            type: 'GET',
+            url: service + 'cablename/all',
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                for (i in arrData) {
+                    var objCableName = {};
+                    objCableName = arrData[i];
+                    $("#propName").append($('<'+'option value'+'="'+objCableName.propertyName+'">'+objCableName.propertyName+'</option>'))
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting cablename');
+            }
+        });
+        // $("#propName").append($('<option value="4">four</option>'));
+    };
+    SetSelectOptions();
+
+    var AddPropertyNameIntoBase = function () {
+      console.log('AddPropertyNameIntoBase='+$("#propertyname").val());
+      var JSONpropName = {
+          "propertyName":$("#propertyname").val()
+      };
+        $.ajax({
+            type: 'POST',
+            url: service + 'cablename/add',
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONpropName),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('success add PropertyName');
+                $("#propName").append($('<'+'option value'+'="'+$("#propertyname").val()+'">'+$("#propertyname").val()+'</option>'))
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error add PropertyName');
+            }
+        });
+    };
 </script>
 
 </body>
