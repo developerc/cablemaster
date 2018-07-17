@@ -6,18 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import ru.cablemaster.dao.CableNameDao;
-import ru.cablemaster.dao.FeatureCoordDao;
-import ru.cablemaster.dao.FeatureLonLatDao;
-import ru.cablemaster.dao.FeatureNextIdDao;
-import ru.cablemaster.dao.impl.CableNameDaoImpl;
-import ru.cablemaster.dao.impl.FeatureCoordDaoImpl;
-import ru.cablemaster.dao.impl.FeatureLonLatDaoImpl;
-import ru.cablemaster.dao.impl.FeatureNextIdDaoImpl;
-import ru.cablemaster.entity.CableName;
-import ru.cablemaster.entity.FeatureCoord;
-import ru.cablemaster.entity.FeatureLonLat;
-import ru.cablemaster.entity.FeatureNextId;
+import ru.cablemaster.dao.*;
+import ru.cablemaster.dao.impl.*;
+import ru.cablemaster.entity.*;
 
 @Configuration
 @PropertySource(value = "classpath:util.properties")
@@ -54,5 +45,10 @@ public class AppConfig {
     @Bean
     public CableNameDao cableNameDao(){
         return new CableNameDaoImpl(CableName.class);
+    }
+
+    @Bean
+    public ConnInsideFeatureDao connInsideFeatureDao(){
+        return new ConnInsideFeatureDaoImpl(ConnInsideFeature.class);
     }
 }
