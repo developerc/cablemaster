@@ -57,5 +57,12 @@ public interface FeatureCoordService {
      * @return true if success deleting
      * **/
     List<FeatureCoord> delFeatureCoordByPropertyId(String propertyId);
+
+    /**
+     * method for finding featureCoords by propertyName
+     *@param propertyName = propertyName of featureCoord
+     *@return list featureCoord with success parameters
+     * **/
+    List<FeatureCoord> getFeatureCoordByPropertyName(String propertyName);
 }
 

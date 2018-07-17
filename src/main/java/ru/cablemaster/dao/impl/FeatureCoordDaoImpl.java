@@ -26,6 +26,13 @@ public class FeatureCoordDaoImpl extends BasicDaoImpl<FeatureCoord> implements F
         return query.getResultList();
     }
 
+    @Override
+    public List<FeatureCoord> getFeatureCoordByPropertyName(String propertyName) {
+        Query query = getSessionFactory().createQuery("SELECT a FROM FeatureCoord as a WHERE a.propertyName = :propertyName");
+        query.setParameter("propertyName", propertyName);
+        return query.getResultList();
+    }
+
     /*@Override
     public FeatureCoord delFeatureCoordByPropertyId(String propertyId) {
         Query query = getSessionFactory().createQuery("DELETE FROM FeatureCoord  WHERE propertyId = :propertyId");

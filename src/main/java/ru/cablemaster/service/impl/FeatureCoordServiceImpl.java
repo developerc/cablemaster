@@ -48,6 +48,11 @@ public class FeatureCoordServiceImpl implements FeatureCoordService{
         return featureCoordDao.delFeatureCoordByPropertyId(propertyId);
     }
 
+    @Override
+    public List<FeatureCoord> getFeatureCoordByPropertyName(String propertyName) {
+        return featureCoordDao.getFeatureCoordByPropertyName(propertyName);
+    }
+
     /*@Override
     public FeatureCoord delFeatureCoordByPropertyId(String propertyId) {
         return featureCoordDao.delete(featureCoordDao.getFeatureCoordByPropertyId(propertyId));

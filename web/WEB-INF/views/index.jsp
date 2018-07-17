@@ -24,9 +24,11 @@
     <button type="button" onclick="AddLineStringFromBase()">Add LineString</button>
         <input type="text" id="propertyname" size="30">
         <button type="button" onclick="AddPropertyNameIntoBase()">Добавить propertyName</button>
+        <label>Показывать только</label>
+        <input type="checkbox" name="cb2" id="check2" value="0"/>
     <label>propertyName:</label>
         <select id="propName"></select>
-        <label id="labelNextId">nextid=0</label>
+        <%--<label id="labelNextId">nextid=0</label>--%>
     <label>Удалить по propertyId:</label>
     <input type="text" id="nextidid" size="10">
     <button type="button" onclick="DelFeatureByPropertyId()">Delete</button>
@@ -482,9 +484,17 @@
     //при нажатии на кнопку отображаем на карте все линии из базы
     var AddLineStringFromBase = function () {
         console.log('AddLineStringFromBase');
+        var featureCoordShow = '';
+        if($('#check2').prop('checked')) {
+            featureCoordShow = 'featurecoord/get/propertyname/' + $("#propName option:selected").val();
+        } else {
+            featureCoordShow = 'featurecoord/all';
+        }
+        console.log('featureCoordShow='+featureCoordShow);
         $.ajax({
             type: 'GET',
-            url: service + 'featurecoord/all',
+            url: service + featureCoordShow,
+            // url: service + 'featurecoord/all',
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -547,38 +557,6 @@
         });
 
         // console.log('выбрано propName=' + $("#propName option:selected").val());
-        /*var arrStringCoords = [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]];
-        var linestring_feature = new ol.Feature({
-            geometry: new ol.geom.LineString(
-                // [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]]
-                arrStringCoords
-            )
-        });
-          vectorSource.addFeature( linestring_feature );*/
-        /*var myLinestr = new ol.geom.LineString();
-        myLinestr.appendCoordinate(4463583.262541277,5756721.0204985505);
-        myLinestr.appendCoordinate(4469306.48503413,5756931.222326335);
-        vectorSource.addFeature( myLinestr );*/
-        /*var linestring_feature = new ol.Feature({
-            geometry: new ol.geom.LineString(
-                [[4466646.416733378,5756930.625162051],[4466801.679447082,5757077.527575786]]
-            )
-        });
-        vectorSource.addFeature( linestring_feature );
-        linestring_feature = new ol.Feature({
-            geometry: new ol.geom.LineString(
-                [[4463583.262541277,5756721.0204985505],[4469306.48503413,5756931.222326335]]
-            )
-        });
-        vectorSource.addFeature( linestring_feature );*/
-        // var geojsonObject = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[4466646.416733378,5756930.625162051],[4466801.679447082,5757077.527575786]]},"properties":{"id":1,"name":"myCable1"}}]};
-        // vectorSource.addFeature((new ol.format.GeoJSON()).readFeatures(geojsonObject));
-        /*var source2 = new ol.source.Vector({
-            features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
-        });
-        var layer2 = new ol.layer.Vector({
-            source: source2
-        });*/
     };
 
     var IncrFeatureNextId = function () {
@@ -620,7 +598,7 @@
             success: function (result) {
                 console.log('Success update FeatureNextId');
                 nextid = incrementNextId;
-                $("#labelNextId").text("nextid=" + incrementNextId);
+                //$("#labelNextId").text("nextid=" + incrementNextId);
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('Failed update FeatureNextId');

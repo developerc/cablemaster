@@ -59,5 +59,12 @@ public class FeatureCoordController {
     public FeatureCoord updFeatureCoord(@RequestBody FeatureCoord featureCoord){
         return featureCoordService.updFeatureCoord(featureCoord);
     }
+
+    @RequestMapping(value = "/get/propertyname/{propertyname}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public List<FeatureCoord> getFeatureCoordByPropertyName(@PathVariable(value = "propertyname") String propertyname){
+        // exception
+        return featureCoordService.getFeatureCoordByPropertyName(propertyname);
+    }
 }
 
