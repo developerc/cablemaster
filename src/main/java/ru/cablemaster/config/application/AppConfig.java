@@ -51,4 +51,9 @@ public class AppConfig {
     public ConnInsideFeatureDao connInsideFeatureDao(){
         return new ConnInsideFeatureDaoImpl(ConnInsideFeature.class);
     }
+
+    @Bean
+    public ConnBetweenFeatureDao connBetweenFeatureDao(){
+        return new ConnBetweenFeatureDaoImpl(ConnBetweenFeature.class);
+    }
 }
