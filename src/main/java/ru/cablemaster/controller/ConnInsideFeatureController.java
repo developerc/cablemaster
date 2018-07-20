@@ -33,6 +33,13 @@ public class ConnInsideFeatureController {
         return connInsideFeatureService.getConnInsideFeatureById(Long.parseLong(id));
     }
 
+    @RequestMapping(value = "/get/propertyid/{propertyid}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public List<ConnInsideFeature> getConnInsideFeatureByPropertyId(@PathVariable(value = "propertyid") String propertyid){
+        // exception
+        return connInsideFeatureService.getConnInsideFeatureByPropertyId(propertyid);
+    }
+
     // localhost:8080/cat/delete?id=5&name=Jack
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
     @ResponseBody

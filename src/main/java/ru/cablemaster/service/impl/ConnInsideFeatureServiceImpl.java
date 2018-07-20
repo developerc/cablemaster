@@ -37,4 +37,9 @@ public class ConnInsideFeatureServiceImpl implements ConnInsideFeatureService{
     public ConnInsideFeature updConnInsideFeature(ConnInsideFeature connInsideFeature) {
         return connInsideFeatureDao.update(connInsideFeature);
     }
+
+    @Override
+    public List<ConnInsideFeature> getConnInsideFeatureByPropertyId(String propertyId) {
+        return connInsideFeatureDao.getConnInsideFeatureByPropertyId(propertyId);
+    }
 }

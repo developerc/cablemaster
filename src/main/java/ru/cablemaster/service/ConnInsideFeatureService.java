@@ -43,4 +43,11 @@ public interface ConnInsideFeatureService {
      * @return updated connInsideFeature
      */
     ConnInsideFeature updConnInsideFeature(ConnInsideFeature connInsideFeature);
+
+    /**
+     * method for finding ConnInsideFeature by propertyId
+     *@param propertyId = propertyId of ConnInsideFeature
+     *@return list ConnInsideFeature with success parameters
+     * **/
+    List<ConnInsideFeature> getConnInsideFeatureByPropertyId(String propertyId);
 }
