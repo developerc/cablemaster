@@ -6,9 +6,35 @@
 </head>
 <body>
 <script>
+    var service = 'http://localhost:8080/';
     var AddCableFeature = function () {
-        //alert('hey')
         console.log('propertyId=' + $("#propertyId").val() + ', threadCount=' + $("#threadCount").val());
+        var countHalfThread = $("#threadCount").val() * 2;
+        console.log('countHalfThread=' + countHalfThread);
+        for (var i = 0; i < countHalfThread; i++) {
+            AddHalfThread();
+        }
+    };
+
+    AddHalfThread = function () {
+        var JSONObject = {
+            'propertyId': $("#propertyId").val()
+        };
+        $.ajax({
+            type: 'POST',
+            url: service + "conninsidefeature/add",
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONObject),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('добавлен conninsidefeature');
+                return true;
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('ошибка добавления conninsidefeature');
+            }
+        });
     };
 </script>
 <div class="panel panel-default">
