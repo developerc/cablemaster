@@ -6,6 +6,7 @@
 </head>
 <body>
 <script>
+    var arrData=[];
     var countHalfThreads = 0;
     var service = 'http://localhost:8080/';
     var AddCableFeature = function () {
@@ -20,6 +21,7 @@
 
     var GetHalfThreadsByPropertyId = function () {
         countHalfThreads = 0;
+        /*var arrData;*/
         $.ajax({
             type: 'GET',
             url: service + 'conninsidefeature/get/propertyid/' + $("#propertyId").val(),
@@ -28,7 +30,7 @@
             success: function (result) {
                 var output = '';
                 var stringData = JSON.stringify(result);
-                var arrData = JSON.parse(stringData);
+                /*var */arrData = JSON.parse(stringData);
                 output+= '<table class="table-row-cell" border="1">';
                 output+= '<tr>';
                 output+= '<th>id</'+'th>';
@@ -54,7 +56,7 @@
                 }
 
                 output+= '</' +'table>';
-                output+='<button type="button" onclick="UpdateConnInsideFeature()">Update table</button>';
+                output+='<button type="button" onclick="UpdateConnInsideFeature(arrData)">Update table</button>';
                 $('#tableCable').html(output);
             },
             error: function (jqXHR, testStatus, errorThrown) {
@@ -64,7 +66,33 @@
     };
 
     var UpdateConnInsideFeature = function () {
-      console.log('UpdateConnInsideFeature')
+      console.log('UpdateConnInsideFeature, '+'countHalfThreads='+countHalfThreads);
+      console.log('arrData[0].id='+arrData[0].id+'connectedTo0='+$('#idConnectedTo0').val()+'arrData[0].propertyId='+arrData[0].propertyId+'ColorThread0='+$('#idColorThread0').val()+'Description0='+$('#idDescription0').val()+'Label0='+$('#idLabel0').val()+'Reserved0='+$('#idReserved0').val());
+        for (i in arrData) {
+            var JSONObject = {
+                'id': arrData[i].id,
+                'connectedTo': $('#idConnectedTo'+i).val(),
+                'propertyId': arrData[i].propertyId,
+                'colorThread': $('#idColorThread'+i).val(),
+                'description': $('#idDescription'+i).val(),
+                'label': $('#idLabel'+i).val(),
+                'reserved': $('#idReserved'+i).val()
+            };
+            $.ajax({
+                type: 'PUT',
+                url: service + "conninsidefeature/upd",
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify(JSONObject),
+                dataType: 'json',
+                async: false,
+                success: function (result) {
+                    console.log('Success updating table');
+                },
+                error: function (jqXHR, testStatus, errorThrown) {
+                    console.log('Error updating table');
+                }
+            });
+        }
     };
 
     var AddHalfThread = function () {
