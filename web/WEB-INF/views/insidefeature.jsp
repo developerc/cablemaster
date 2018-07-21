@@ -6,6 +6,7 @@
 </head>
 <body>
 <script>
+    var countHalfThreads = 0;
     var service = 'http://localhost:8080/';
     var AddCableFeature = function () {
         console.log('propertyId=' + $("#propertyId").val() + ', threadCount=' + $("#threadCount").val());
@@ -18,6 +19,7 @@
     };
 
     var GetHalfThreadsByPropertyId = function () {
+        countHalfThreads = 0;
         $.ajax({
             type: 'GET',
             url: service + 'conninsidefeature/get/propertyid/' + $("#propertyId").val(),
@@ -41,22 +43,28 @@
                 for (i in arrData) {
                     output += '<tr>';
                     output += '<th>' + arrData[i].id + '</' + 'th>';
-                    output += '<th>' + arrData[i].connectedTo + '</' + 'th>';
+                    output += '<th>' +'<input id="idConnectedTo'+i+'"'+' " value="'+ arrData[i].connectedTo+'"/>' + '</' + 'th>';
                     output += '<th>' + arrData[i].propertyId + '</' + 'th>';
-                    output += '<th>' + arrData[i].colorThread + '</' + 'th>';
-                    output += '<th>' + arrData[i].description + '</' + 'th>';
-                    output += '<th>' + arrData[i].label + '</' + 'th>';
-                    output += '<th>' + arrData[i].reserved + '</' + 'th>';
+                    output += '<th>' +'<input id="idColorThread'+i+'"'+' " value="' + arrData[i].colorThread+'"/>' + '</' + 'th>';
+                    output += '<th>' +'<input id="idDescription'+i+'"'+' " value="' + arrData[i].description+'"/>' + '</' + 'th>';
+                    output += '<th>' +'<input id="idLabel'+i+'"'+' " value="' + arrData[i].label+'"/>' + '</' + 'th>';
+                    output += '<th>' +'<input id="idReserved'+i+'"'+' " value="' + arrData[i].reserved+'"/>' + '</' + 'th>';
                     output += '</' + 'tr>';
+                    countHalfThreads++;
                 }
 
                 output+= '</' +'table>';
+                output+='<button type="button" onclick="UpdateConnInsideFeature()">Update table</button>';
                 $('#tableCable').html(output);
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 $('#tableCable').html(JSON.stringify(jqXHR))
             }
         });
+    };
+
+    var UpdateConnInsideFeature = function () {
+      console.log('UpdateConnInsideFeature')
     };
 
     var AddHalfThread = function () {
