@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AppController {
     @RequestMapping("/")
     public String helloPage(){
-        return "insidefeature";
+        return "betweenfeature";
     }
 }

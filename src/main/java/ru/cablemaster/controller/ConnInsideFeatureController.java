@@ -40,6 +40,13 @@ public class ConnInsideFeatureController {
         return connInsideFeatureService.getConnInsideFeatureByPropertyId(propertyid);
     }
 
+    @RequestMapping(value = "/deletebypropertyid/{propertyid}", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public List<ConnInsideFeature> delConnInsideFeatureByPropertyId(@PathVariable(value = "propertyid") String propertyid){
+        // exception
+        return connInsideFeatureService.delConnInsideFeatureByPropertyId(propertyid);
+    }
+
     // localhost:8080/cat/delete?id=5&name=Jack
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
     @ResponseBody

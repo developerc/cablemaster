@@ -17,4 +17,13 @@ public class ConnInsideFeatureDaoImpl extends BasicDaoImpl<ConnInsideFeature> im
         query.setParameter("propertyId", propertyId);
         return query.getResultList();
     }
+
+    @Override
+    public List<ConnInsideFeature> delConnInsideFeatureByPropertyId(String propertyId) {
+        Query query = getSessionFactory().createQuery("delete from ConnInsideFeature where propertyId =:propertyId");
+        query.setParameter("propertyId", propertyId);
+        return query.getResultList();
+    }
+
+
 }

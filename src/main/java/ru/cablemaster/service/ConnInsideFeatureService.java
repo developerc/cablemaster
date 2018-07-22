@@ -50,4 +50,11 @@ public interface ConnInsideFeatureService {
      *@return list ConnInsideFeature with success parameters
      * **/
     List<ConnInsideFeature> getConnInsideFeatureByPropertyId(String propertyId);
+
+    /**
+     * method for deleting ConnInsideFeature by propertyId
+     * @param propertyId = propertyId of ConnInsideFeature
+     * @return List ConnInsideFeature success deleting ConnInsideFeature
+     * **/
+    List<ConnInsideFeature> delConnInsideFeatureByPropertyId(String propertyId);
 }

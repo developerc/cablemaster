@@ -42,4 +42,9 @@ public class ConnInsideFeatureServiceImpl implements ConnInsideFeatureService{
     public List<ConnInsideFeature> getConnInsideFeatureByPropertyId(String propertyId) {
         return connInsideFeatureDao.getConnInsideFeatureByPropertyId(propertyId);
     }
+
+    @Override
+    public List<ConnInsideFeature> delConnInsideFeatureByPropertyId(String propertyId) {
+        return connInsideFeatureDao.delConnInsideFeatureByPropertyId(propertyId);
+    }
 }

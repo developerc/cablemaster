@@ -1,0 +1,17 @@
+Для Feature типа "Кабель"
+id - ID
+connectedTo - к какому id полуволокна подсоединен
+propertyId - уникальный ID нашей feature
+colorThread - цвет полуволокна (red)
+description - begin или end, с какой стороны кабеля торчит полуволокно
+label - общее имя кабеля
+reserved - цвет модуля (red_module)
+
+Для Feature типа "Муфта"
+id - ID
+connectedTo - к какому id полуволокна подсоединен
+propertyId - уникальный ID нашей feature
+colorThread - цвет полуволокна (red) подсоединенного кабеля
+description - описываем feature (mufta)
+label - propertyId кабеля, feature, который подсоединен к муфте
+reserved - цвет модуля (red_module) подсоединенного кабеля
