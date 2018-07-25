@@ -7,6 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AppController {
     @RequestMapping("/")
     public String helloPage(){
+        return "index";
+    }
+
+    @RequestMapping("/insidefeature")
+    public String insidefeaturePage(){
+        return "insidefeature";
+    }
+
+    @RequestMapping("/betweenfeature")
+    public String betweenfeaturePage(){
         return "betweenfeature";
     }
 }

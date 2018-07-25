@@ -7,7 +7,7 @@
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <%--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>--%>
 </head>
 <body>
 <div id="map" class="map">
@@ -36,6 +36,15 @@
     <button type="button" onclick="DelFeatureByPropertyId()">Delete</button>
         <label>Показывать propertyName:</label>
         <input type="checkbox" name="cb1" id="check1" value="1" checked />
+</form>
+<form class="form-inline">
+    <%--<button type="button" onclick="window.location = 'http://localhost:8080/insidefeature';">ConnInsideFeature</button>--%>
+        <li>
+            <a href="http://localhost:8080/insidefeature">insidefeature</a>
+        </li>
+        <li>
+            <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
+        </li>
 </form>
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
