@@ -7,6 +7,7 @@
 </head>
 <body>
 <script>
+    var trassaTableCableHtml = '';
     var arrData=[];
     var countHalfThreads = 0;
     var service = 'http://localhost:8080/';
@@ -196,6 +197,37 @@
             }
         });
     };
+
+    var TrassaById = function () {
+      console.log('TrassaById='+$("#propertyId").val());
+      trassaTableCableHtml = '';
+      $.ajax({
+          type: 'GET',
+          url: service + 'conninsidefeature/get/' + $("#propertyId").val(),
+          dataType: 'json',
+          async: false,
+          success: function (result) {
+              var stringData = JSON.stringify(result);
+              var Data = JSON.parse(stringData);
+              trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
+              trassaTableCableHtml+= '<tr>';
+              trassaTableCableHtml+= '<th>id</'+'th>';
+              trassaTableCableHtml+= '<th>connectedTo</'+'th>';
+              trassaTableCableHtml+= '<th>propertyId</'+'th>';
+              trassaTableCableHtml+= '<th>colorThread</'+'th>';
+              trassaTableCableHtml+= '<th>description</'+'th>';
+              trassaTableCableHtml+= '<th>label</'+'th>';
+              trassaTableCableHtml+= '<th>reserved</'+'th>';
+              trassaTableCableHtml+= '</' +'tr>';
+
+              trassaTableCableHtml+= '</' +'table>';
+              $('#tableCable').html(output);
+          },
+          error: function (jqXHR, testStatus, errorThrown) {
+              $('#tableCable').html(JSON.stringify(jqXHR))
+          }
+      });
+    };
 </script>
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -211,6 +243,7 @@
             <button type="button" onclick="DelCableFeatureByPropertyId()">Удалить feature по propertyId</button>
             <button type="button" onclick="GetHalfThreadsByPropertyId()">Редактировать feature по propertyId</button>
             <button type="button" onclick="ShowAllHalfThreads()">Показать все feature</button>
+            <button type="button" onclick="TrassaById()">Трассировка по ID</button>
         </form>
     </div>
     <div class="panel-body" id="tableCable"></div>
