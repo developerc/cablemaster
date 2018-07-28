@@ -43,4 +43,11 @@ public interface ConnBetweenFeatureService {
      * @return updated ConnBetweenFeature
      */
     ConnBetweenFeature updConnBetweenFeature(ConnBetweenFeature connBetweenFeature);
+
+    /**
+     * method for receiving all ConnBetweenFeature by connId1 or connId2
+     *
+     * @return all ConnBetweenFeatures by connId1 or connId2
+     */
+    List<ConnBetweenFeature> getConnBetweenById(long id);
 }

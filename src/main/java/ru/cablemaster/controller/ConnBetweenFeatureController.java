@@ -26,6 +26,12 @@ public class ConnBetweenFeatureController {
         return connBetweenFeatureService.getConnBetweenFeatures();
     }
 
+    @RequestMapping(value = "/getconnbetweenbyid/{id}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public List<ConnBetweenFeature> getConnBetweenById(@PathVariable(value = "id") long id){
+        return connBetweenFeatureService.getConnBetweenById(id);
+    }
+
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     @ResponseBody
     public ConnBetweenFeature getConnBetweenFeatureById(@PathVariable(value = "id") String id){

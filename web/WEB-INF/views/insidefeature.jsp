@@ -214,37 +214,18 @@
         trassaTableCableHtml+= '</' +'tr>';
 
         //GetInsideById();
-        console.log('GetInsideById='+GetInsideById());
-
+        // console.log('GetInsideById='+GetInsideById());
+        if (GetInsideById >0){
+            GetBetweenById();
+        }
         trassaTableCableHtml+= '</' +'table>';
         $('#tableCable').html(trassaTableCableHtml);
-      /*$.ajax({
-          type: 'GET',
-          url: service + 'conninsidefeature/get/' + $("#propertyId").val(),
-          dataType: 'json',
-          async: false,
-          success: function (result) {
-              var stringData = JSON.stringify(result);
-              var Data = JSON.parse(stringData);
-              console.log('Data='+Data);
-              trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
-              trassaTableCableHtml+= '<tr>';
-              trassaTableCableHtml+= '<th>id</'+'th>';
-              trassaTableCableHtml+= '<th>подсоединенный ID</'+'th>';
-              trassaTableCableHtml+= '<th>propertyId</'+'th>';
-              trassaTableCableHtml+= '<th>colorThread</'+'th>';
-              trassaTableCableHtml+= '<th>description</'+'th>';
-              trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
-              trassaTableCableHtml+= '<th>цвет модуля</'+'th>';
-              trassaTableCableHtml+= '</' +'tr>';
 
-              trassaTableCableHtml+= '</' +'table>';
-              $('#tableCable').html(trassaTableCableHtml);
-          },
-          error: function (jqXHR, testStatus, errorThrown) {
-              $('#tableCable').html(JSON.stringify(jqXHR))
-          }
-      });*/
+    };
+
+    var GetBetweenById = function () {
+        var retId = -1;
+
     };
 
     var GetInsideById = function () {

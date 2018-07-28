@@ -37,4 +37,9 @@ public class ConnBetweenFeatureServiceImpl implements ConnBetweenFeatureService 
     public ConnBetweenFeature updConnBetweenFeature(ConnBetweenFeature connBetweenFeature) {
         return connBetweenFeatureDao.update(connBetweenFeature);
     }
+
+    @Override
+    public List<ConnBetweenFeature> getConnBetweenById(long id) {
+        return connBetweenFeatureDao.getConnBetweenById(id);
+    }
 }
