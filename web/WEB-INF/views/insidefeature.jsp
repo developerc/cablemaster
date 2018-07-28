@@ -7,6 +7,7 @@
 </head>
 <body>
 <script>
+    // var retId = -1;
     var trassaTableCableHtml = '';
     var arrData=[];
     var countHalfThreads = 0;
@@ -201,7 +202,23 @@
     var TrassaById = function () {
       console.log('TrassaById='+$("#propertyId").val());
       trassaTableCableHtml = '';
-      $.ajax({
+        trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
+        trassaTableCableHtml+= '<tr>';
+        trassaTableCableHtml+= '<th>id</'+'th>';
+        trassaTableCableHtml+= '<th>подсоединенный ID</'+'th>';
+        trassaTableCableHtml+= '<th>propertyId</'+'th>';
+        trassaTableCableHtml+= '<th>colorThread</'+'th>';
+        trassaTableCableHtml+= '<th>description</'+'th>';
+        trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
+        trassaTableCableHtml+= '<th>цвет модуля</'+'th>';
+        trassaTableCableHtml+= '</' +'tr>';
+
+        //GetInsideById();
+        console.log('GetInsideById='+GetInsideById());
+
+        trassaTableCableHtml+= '</' +'table>';
+        $('#tableCable').html(trassaTableCableHtml);
+      /*$.ajax({
           type: 'GET',
           url: service + 'conninsidefeature/get/' + $("#propertyId").val(),
           dataType: 'json',
@@ -209,24 +226,58 @@
           success: function (result) {
               var stringData = JSON.stringify(result);
               var Data = JSON.parse(stringData);
+              console.log('Data='+Data);
               trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
               trassaTableCableHtml+= '<tr>';
               trassaTableCableHtml+= '<th>id</'+'th>';
-              trassaTableCableHtml+= '<th>connectedTo</'+'th>';
+              trassaTableCableHtml+= '<th>подсоединенный ID</'+'th>';
               trassaTableCableHtml+= '<th>propertyId</'+'th>';
               trassaTableCableHtml+= '<th>colorThread</'+'th>';
               trassaTableCableHtml+= '<th>description</'+'th>';
-              trassaTableCableHtml+= '<th>label</'+'th>';
-              trassaTableCableHtml+= '<th>reserved</'+'th>';
+              trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
+              trassaTableCableHtml+= '<th>цвет модуля</'+'th>';
               trassaTableCableHtml+= '</' +'tr>';
 
               trassaTableCableHtml+= '</' +'table>';
-              $('#tableCable').html(output);
+              $('#tableCable').html(trassaTableCableHtml);
           },
           error: function (jqXHR, testStatus, errorThrown) {
               $('#tableCable').html(JSON.stringify(jqXHR))
           }
-      });
+      });*/
+    };
+
+    var GetInsideById = function () {
+        var retId = -1;
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/' + $("#propertyId").val(),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                var Data = JSON.parse(stringData);
+                console.log('Data='+Data);
+                // trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
+                trassaTableCableHtml+= '<tr>';
+                trassaTableCableHtml+= '<th>' + Data.id + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.connectedTo + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.propertyId + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.colorThread + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.description + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.label + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.reserved + '</' + 'th>';
+                trassaTableCableHtml+= '</' +'tr>';
+
+                retId = Data.connectedTo;
+               /* trassaTableCableHtml+= '</' +'table>';
+                $('#tableCable').html(trassaTableCableHtml);*/
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                $('#tableCable').html(JSON.stringify(jqXHR))
+            }
+        });
+        return retId;
     };
 </script>
 <div class="panel panel-default">
