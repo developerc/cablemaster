@@ -7,7 +7,8 @@
 </head>
 <body>
 <script>
-    // var retId = -1;
+    var retId = -1; //ID с которым соединено
+    var boolConnId1 = false; // GetBetweenById соединено не с connId1
     var trassaTableCableHtml = '';
     var arrData=[];
     var countHalfThreads = 0;
@@ -200,6 +201,7 @@
     };
 
     var TrassaById = function () {
+        retId = $("#propertyId").val();
       console.log('TrassaById='+$("#propertyId").val());
       trassaTableCableHtml = '';
         trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
@@ -213,26 +215,84 @@
         trassaTableCableHtml+= '<th>цвет модуля</'+'th>';
         trassaTableCableHtml+= '</' +'tr>';
 
-        //GetInsideById();
-        // console.log('GetInsideById='+GetInsideById());
-        if (GetInsideById >0){
+        /*GetInsideById();
+        if (retId >0){
             GetBetweenById();
-        }
+        }*/
+
+        /*for (var i=0; i<10; i++){
+            if (retId<0){
+                break;
+            }
+            GetInsideById();
+            if (retId >0){
+                GetBetweenById();
+            }
+        }*/
+
+        do {
+            GetInsideById();
+            if (retId < 0){
+                break;
+            }
+            GetBetweenById();
+            if (retId < 0){
+                break;
+            }
+        } while (retId > 0);
         trassaTableCableHtml+= '</' +'table>';
         $('#tableCable').html(trassaTableCableHtml);
 
     };
 
     var GetBetweenById = function () {
-        var retId = -1;
+        $.ajax({
+            type: 'GET',
+            url: service + 'connbetweenfeature/getconnbetweenbyid/' + retId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                arrData = JSON.parse(stringData);
+                if (arrData.length >0) {
 
+                    console.log('arrData=' + arrData);
+                    trassaTableCableHtml += '<tr>';
+                    trassaTableCableHtml += '<th>' + arrData[0].connId1 + '</' + 'th>';
+                    trassaTableCableHtml += '<th>' + arrData[0].connId2 + '</' + 'th>';
+                    trassaTableCableHtml += '<th>' + '' + '</' + 'th>';
+                    trassaTableCableHtml += '<th>' + '' + '</' + 'th>';
+                    trassaTableCableHtml += '<th>' + '' + '</' + 'th>';
+                    trassaTableCableHtml += '<th>' + '' + '</' + 'th>';
+                    trassaTableCableHtml += '<th>' + '' + '</' + 'th>';
+                    trassaTableCableHtml += '</' + 'tr>';
+                    if (arrData[0].connId1 == retId) {
+                        retId = arrData[0].connId2;
+                    } else {
+                        retId = arrData[0].connId1;
+                    }
+                } else {
+                    retId = -1;
+                }
+                //else {
+                     /*if (arrData[0].connId2 !== retId) {
+                        retId = arrData[0].connId2;
+                     }*/
+                //}
+
+
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                $('#tableCable').html(JSON.stringify(jqXHR))
+            }
+        });
+        console.log('GetBetweenById: retId='+retId);
     };
 
     var GetInsideById = function () {
-        var retId = -1;
         $.ajax({
             type: 'GET',
-            url: service + 'conninsidefeature/get/' + $("#propertyId").val(),
+            url: service + 'conninsidefeature/get/' + retId,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -258,7 +318,7 @@
                 $('#tableCable').html(JSON.stringify(jqXHR))
             }
         });
-        return retId;
+        console.log('GetInsideById: retId='+retId);
     };
 </script>
 <div class="panel panel-default">
