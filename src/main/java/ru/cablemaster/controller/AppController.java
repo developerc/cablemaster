@@ -19,4 +19,9 @@ public class AppController {
     public String betweenfeaturePage(){
         return "betweenfeature";
     }
+
+    @RequestMapping("/maptrassa")
+    public String maptrassaPage(){
+        return "maptrassa";
+    }
 }

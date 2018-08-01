@@ -11,9 +11,9 @@
     var boolConnId1 = false; // GetBetweenById соединено не с connId1
     var trassaTableCableHtml = '';
     var arrData=[];
+    var arrPropertyId = [];
     var countHalfThreads = 0;
     var service = 'http://localhost:8080/';
-
     var DelCableFeatureByPropertyId = function () {
         console.log('DelCableFeatureByPropertyId');
         $.ajax({
@@ -35,7 +35,6 @@
             }
         });
     };
-
     var DelConnInsideFeatureById = function (idConnInsideFeature) {
         $.ajax({
             type: 'DELETE',
@@ -50,7 +49,6 @@
             }
         });
     };
-
     var AddCableFeature = function () {
         console.log('propertyId=' + $("#propertyId").val() + ', threadCount=' + $("#threadCount").val());
         var countHalfThread = $("#threadCount").val() * 2;
@@ -60,49 +58,45 @@
         }
         GetHalfThreadsByPropertyId();
     };
-
     var ShowAllHalfThreads = function () {
-      $.ajax({
-          type: 'GET',
-          url: service + 'conninsidefeature/all',
-          dataType: 'json',
-          async: false,
-          success: function (result) {
-              var output = '';
-              var stringData = JSON.stringify(result);
-              arrData = JSON.parse(stringData);
-              output+= '<table class="table-row-cell" border="1">';
-              output+= '<tr>';
-              output+= '<th>id</'+'th>';
-              output+= '<th>connectedTo</'+'th>';
-              output+= '<th>propertyId</'+'th>';
-              output+= '<th>colorThread</'+'th>';
-              output+= '<th>description</'+'th>';
-              output+= '<th>label</'+'th>';
-              output+= '<th>reserved</'+'th>';
-              output+= '</' +'tr>';
-
-              for (i in arrData) {
-                  output += '<tr>';
-                  output += '<th>' + arrData[i].id + '</' + 'th>';
-                  output += '<th>' + arrData[i].connectedTo + '</' + 'th>';
-                  output += '<th>' + arrData[i].propertyId + '</' + 'th>';
-                  output += '<th>' + arrData[i].colorThread + '</' + 'th>';
-                  output += '<th>' + arrData[i].description + '</' + 'th>';
-                  output += '<th>' + arrData[i].label + '</' + 'th>';
-                  output += '<th>' + arrData[i].reserved + '</' + 'th>';
-                  output += '</' + 'tr>';
-              }
-
-              output+= '</' +'table>';
-              $('#tableCable').html(output);
-          },
-          error: function (jqXHR, testStatus, errorThrown) {
-              $('#tableCable').html(JSON.stringify(jqXHR))
-          }
-      });
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/all',
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var output = '';
+                var stringData = JSON.stringify(result);
+                arrData = JSON.parse(stringData);
+                output+= '<table class="table-row-cell" border="1">';
+                output+= '<tr>';
+                output+= '<th>id</'+'th>';
+                output+= '<th>connectedTo</'+'th>';
+                output+= '<th>propertyId</'+'th>';
+                output+= '<th>colorThread</'+'th>';
+                output+= '<th>description</'+'th>';
+                output+= '<th>label</'+'th>';
+                output+= '<th>reserved</'+'th>';
+                output+= '</' +'tr>';
+                for (i in arrData) {
+                    output += '<tr>';
+                    output += '<th>' + arrData[i].id + '</' + 'th>';
+                    output += '<th>' + arrData[i].connectedTo + '</' + 'th>';
+                    output += '<th>' + arrData[i].propertyId + '</' + 'th>';
+                    output += '<th>' + arrData[i].colorThread + '</' + 'th>';
+                    output += '<th>' + arrData[i].description + '</' + 'th>';
+                    output += '<th>' + arrData[i].label + '</' + 'th>';
+                    output += '<th>' + arrData[i].reserved + '</' + 'th>';
+                    output += '</' + 'tr>';
+                }
+                output+= '</' +'table>';
+                $('#tableCable').html(output);
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                $('#tableCable').html(JSON.stringify(jqXHR))
+            }
+        });
     };
-
     var GetHalfThreadsByPropertyId = function () {
         countHalfThreads = 0;
         /*var arrData;*/
@@ -125,7 +119,6 @@
                 output+= '<th>label</'+'th>';
                 output+= '<th>reserved</'+'th>';
                 output+= '</' +'tr>';
-
                 for (i in arrData) {
                     output += '<tr>';
                     output += '<th>' + arrData[i].id + '</' + 'th>';
@@ -138,7 +131,6 @@
                     output += '</' + 'tr>';
                     countHalfThreads++;
                 }
-
                 output+= '</' +'table>';
                 output+='<button type="button" onclick="UpdateConnInsideFeature(arrData)">Update table</button>';
                 $('#tableCable').html(output);
@@ -148,10 +140,9 @@
             }
         });
     };
-
     var UpdateConnInsideFeature = function () {
-      console.log('UpdateConnInsideFeature, '+'countHalfThreads='+countHalfThreads);
-      console.log('arrData[0].id='+arrData[0].id+'connectedTo0='+$('#idConnectedTo0').val()+'arrData[0].propertyId='+arrData[0].propertyId+'ColorThread0='+$('#idColorThread0').val()+'Description0='+$('#idDescription0').val()+'Label0='+$('#idLabel0').val()+'Reserved0='+$('#idReserved0').val());
+        console.log('UpdateConnInsideFeature, '+'countHalfThreads='+countHalfThreads);
+        console.log('arrData[0].id='+arrData[0].id+'connectedTo0='+$('#idConnectedTo0').val()+'arrData[0].propertyId='+arrData[0].propertyId+'ColorThread0='+$('#idColorThread0').val()+'Description0='+$('#idDescription0').val()+'Label0='+$('#idLabel0').val()+'Reserved0='+$('#idReserved0').val());
         for (i in arrData) {
             var JSONObject = {
                 'id': arrData[i].id,
@@ -178,7 +169,6 @@
             });
         }
     };
-
     var AddHalfThread = function () {
         var JSONObject = {
             'propertyId': $("#propertyId").val()
@@ -199,11 +189,11 @@
             }
         });
     };
-
     var TrassaById = function () {
+        arrPropertyId = [];
         retId = $("#propertyId").val();
-      console.log('TrassaById='+$("#propertyId").val());
-      trassaTableCableHtml = '';
+        console.log('TrassaById='+$("#propertyId").val());
+        trassaTableCableHtml = '';
         trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
         trassaTableCableHtml+= '<tr>';
         trassaTableCableHtml+= '<th>id</'+'th>';
@@ -214,12 +204,10 @@
         trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
         trassaTableCableHtml+= '<th>цвет модуля</'+'th>';
         trassaTableCableHtml+= '</' +'tr>';
-
         /*GetInsideById();
         if (retId >0){
             GetBetweenById();
         }*/
-
         /*for (var i=0; i<10; i++){
             if (retId<0){
                 break;
@@ -229,7 +217,6 @@
                 GetBetweenById();
             }
         }*/
-
         do {
             GetInsideById();
             if (retId < 0){
@@ -241,10 +228,10 @@
             }
         } while (retId > 0);
         trassaTableCableHtml+= '</' +'table>';
+        trassaTableCableHtml+= '<button type="button" onclick="OpenMapTrassa()">Карта с трассировкой' + '</' +'button>';
+
         $('#tableCable').html(trassaTableCableHtml);
-
     };
-
     var GetBetweenById = function () {
         $.ajax({
             type: 'GET',
@@ -255,7 +242,6 @@
                 var stringData = JSON.stringify(result);
                 arrData = JSON.parse(stringData);
                 if (arrData.length >0) {
-
                     console.log('arrData=' + arrData);
                     trassaTableCableHtml += '<tr>';
                     trassaTableCableHtml += '<th>' + arrData[0].connId1 + '</' + 'th>';
@@ -275,12 +261,10 @@
                     retId = -1;
                 }
                 //else {
-                     /*if (arrData[0].connId2 !== retId) {
-                        retId = arrData[0].connId2;
-                     }*/
+                /*if (arrData[0].connId2 !== retId) {
+                   retId = arrData[0].connId2;
+                }*/
                 //}
-
-
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 $('#tableCable').html(JSON.stringify(jqXHR))
@@ -288,7 +272,6 @@
         });
         console.log('GetBetweenById: retId='+retId);
     };
-
     var GetInsideById = function () {
         $.ajax({
             type: 'GET',
@@ -309,16 +292,31 @@
                 trassaTableCableHtml+= '<th>' + Data.label + '</' + 'th>';
                 trassaTableCableHtml+= '<th>' + Data.reserved + '</' + 'th>';
                 trassaTableCableHtml+= '</' +'tr>';
-
                 retId = Data.connectedTo;
-               /* trassaTableCableHtml+= '</' +'table>';
-                $('#tableCable').html(trassaTableCableHtml);*/
+                arrPropertyId.push(Data.propertyId);
+                /* trassaTableCableHtml+= '</' +'table>';
+                 $('#tableCable').html(trassaTableCableHtml);*/
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 $('#tableCable').html(JSON.stringify(jqXHR))
             }
         });
         console.log('GetInsideById: retId='+retId);
+    };
+
+    var OpenMapTrassa = function () {
+      console.log('OpenMapTrassa');
+      var spisokParams = '';
+      for (i in arrPropertyId){
+          if (i == 0){
+              spisokParams+=spisokParams + '?param=' + arrPropertyId[i];
+          } else {
+              spisokParams+=spisokParams + '&param=' + arrPropertyId[i];
+          }
+      }
+        window.open('http://localhost:8080/maptrassa' + spisokParams, '_blank');
+        // window.open('http://localhost:8080/maptrassa?param=0&param=1&param=3', '_blank');
+
     };
 </script>
 <div class="panel panel-default">

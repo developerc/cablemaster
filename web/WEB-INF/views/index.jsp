@@ -719,6 +719,8 @@
             }
         });
     };
+
+    addInteraction();
 </script>
 
 </body>
