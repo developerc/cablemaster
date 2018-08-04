@@ -185,16 +185,20 @@
 
                 console.log('drawend:');
                 console.log(featuresGeoJSON);
+              console.log('[]:'+featuresGeoJSON.indexOf("[]"));
                 console.log(evt.feature.getGeometry().getCoordinates(), evt.feature.getProperties());
+                var emptyGeoJson = featuresGeoJSON.indexOf("[]");
 
                 //получаем массив координат вершин мультилинии
                 arrCoords = evt.feature.getGeometry().getCoordinates();
                 //сохраняем в базу линию и ее координаты
-                if (typeSelect.value == 'LineString') {
-                    saveDrawCoordsLineStr(arrCoords, nextid);
-                }
-                if (typeSelect.value == 'Point') {
-                    saveDrawCoordsPoint(arrCoords, nextid);
+                if (emptyGeoJson > 0) {
+                    if (typeSelect.value == 'LineString') {
+                        saveDrawCoordsLineStr(arrCoords, nextid);
+                    }
+                    if (typeSelect.value == 'Point') {
+                        saveDrawCoordsPoint(arrCoords, nextid);
+                    }
                 }
 
                 /*arrCoords = evt.feature.getGeometry().getCoordinates();
@@ -292,6 +296,12 @@
             arrGeometryCoord.push(objFeatureLonLat);
         }
 
+        JSONmodifyCoord = {
+            'geometryType':'LineString',
+            'propertyId':nextid,
+            'propertyName': $("#propName option:selected").val(),
+            'geometryCoord':arrGeometryCoord
+        };
         var JSONfeatureCoord = {
             'geometryType':'LineString',
             'propertyId':nextid,
@@ -310,7 +320,7 @@
             success: function (result) {
                 console.log('Success add FeatureCoord');
                 //увеличиваем на 1 счетчик Features
-                IncrFeatureNextId();
+                // IncrFeatureNextId();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('Failed add FeatureCoord');
@@ -561,6 +571,7 @@
                         console.log('это Point');
                     }
                 }
+                IncrFeatureNextId();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error getting featurecoord');
