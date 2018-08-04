@@ -201,13 +201,6 @@
                     }
                 }
 
-                /*arrCoords = evt.feature.getGeometry().getCoordinates();
-                var lengthCoords;
-                //получаем массив координат мультилинии
-                lengthCoords = arrCoords.length;
-                console.log('lengthCoords='+lengthCoords);*/
-
-                // nextid++;
             },
             this);
     }
@@ -238,6 +231,13 @@
             // 'propertyName': $("#propertyname").val(),
             'geometryCoord':arrGeometryCoord
         };
+
+        JSONmodifyCoord = {
+            'geometryType':'Point',
+            'propertyId':nextid,
+            'propertyName': $("#propName option:selected").val(),
+            'geometryCoord':arrGeometryCoord
+        };
         $.ajax({
             type: 'POST',
             url: service + "featurecoord/add",
@@ -248,7 +248,7 @@
             success: function (result) {
                 console.log('Success add FeatureCoord');
                 //увеличиваем на 1 счетчик Features
-                IncrFeatureNextId();
+                // IncrFeatureNextId();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('Failed add FeatureCoord');
