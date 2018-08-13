@@ -21,7 +21,22 @@
     });
     var vectorSource = new ol.source.Vector({});
     var layer2 = new ol.layer.Vector({
-        source: vectorSource
+        source: vectorSource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255, 255, 255, 0.2)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#3428ff',
+                width: 2
+            }),
+            image: new ol.style.Circle({
+                radius: 7,
+                fill: new ol.style.Fill({
+                    color: '#3428ff'
+                })
+            })
+        })
     });
     var map = new ol.Map({
         layers: [raster,
