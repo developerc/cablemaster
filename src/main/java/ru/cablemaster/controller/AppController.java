@@ -24,4 +24,9 @@ public class AppController {
     public String maptrassaPage(){
         return "maptrassa";
     }
+
+    @RequestMapping("/mapschema")
+    public String mapschemaPage(){
+        return "mapschema";
+    }
 }

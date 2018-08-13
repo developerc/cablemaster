@@ -229,6 +229,7 @@
         } while (retId > 0);
         trassaTableCableHtml+= '</' +'table>';
         trassaTableCableHtml+= '<button type="button" onclick="OpenMapTrassa()">Карта с трассировкой' + '</' +'button>';
+        trassaTableCableHtml+= '<button type="button" onclick="OpenMapSchema()">Карта со схемой' + '</' +'button>';
 
         $('#tableCable').html(trassaTableCableHtml);
     };
@@ -294,6 +295,7 @@
                 trassaTableCableHtml+= '</' +'tr>';
                 retId = Data.connectedTo;
                 arrPropertyId.push(Data.propertyId);
+                console.log('Data.propertyId='+Data.propertyId);
                 /* trassaTableCableHtml+= '</' +'table>';
                  $('#tableCable').html(trassaTableCableHtml);*/
             },
@@ -317,6 +319,19 @@
         window.open('http://localhost:8080/maptrassa' + spisokParams, '_blank');
         // window.open('http://localhost:8080/maptrassa?param=0&param=1&param=3', '_blank');
 
+    };
+
+    var OpenMapSchema = function () {
+        console.log('OpenMapSchema');
+        var spisokParams = '';
+        for (i in arrPropertyId){
+            if (i == 0){
+                spisokParams+=spisokParams + '?param=' + arrPropertyId[i];
+            } else {
+                spisokParams+=spisokParams + '&param=' + arrPropertyId[i];
+            }
+        }
+        window.open('http://localhost:8080/mapschema' + spisokParams, '_blank');
     };
 </script>
 <div class="panel panel-default">
