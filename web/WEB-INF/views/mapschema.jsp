@@ -86,13 +86,72 @@
         var zoom = map.getView().getZoom();
         console.log('zoom='+zoom);
         if (zoom < 18) {
-            radiusDependZoom = 7;
-        } else {
-            radiusDependZoom = 20;
+            radiusDependZoom = 5;
+            vectorSource.clear();
+            DrawMuftaSchema();
+        } else if (zoom < 19){
+            radiusDependZoom = 15;
+            vectorSource.clear();
+            GetURLparameter();
+        } else if (zoom < 20){
+            radiusDependZoom = 30;
+            vectorSource.clear();
+            GetURLparameter();
+        } else if (zoom < 21){
+            radiusDependZoom = 50;
+            vectorSource.clear();
+            GetURLparameter();
+        } else if (zoom < 22){
+            radiusDependZoom = 300;
+            vectorSource.clear();
+            GetURLparameter();
         }
-        vectorSource.clear();
-        GetURLparameter();
+        /*vectorSource.clear();
+        GetURLparameter();*/
     });
+
+    //тренируюсь рисовать схему муфты
+    var DrawMuftaSchema = function () {
+        var xCoord = 4466692.398383205;
+        var yCoord = 5756913.30739783;
+        var arrPointCoord = [];
+        var arrPolygonCoord = [];
+
+        arrPointCoord = [];
+        arrPointCoord.push(xCoord);
+        arrPointCoord.push(yCoord);
+        arrPolygonCoord.push(arrPointCoord);
+
+        arrPointCoord = [];
+        arrPointCoord.push(xCoord+1000);
+        arrPointCoord.push(yCoord);
+        arrPolygonCoord.push(arrPointCoord);
+
+        arrPointCoord = [];
+        arrPointCoord.push(xCoord+1000);
+        arrPointCoord.push(yCoord+1000);
+        arrPolygonCoord.push(arrPointCoord);
+
+        arrPointCoord = [];
+        arrPointCoord.push(xCoord);
+        arrPointCoord.push(yCoord+1000);
+        arrPolygonCoord.push(arrPointCoord);
+
+        arrPointCoord = [];
+        arrPointCoord.push(xCoord);
+        arrPointCoord.push(yCoord);
+        arrPolygonCoord.push(arrPointCoord);
+
+        var polygon = new ol.geom.Polygon([ [ [xCoord,yCoord],
+            [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]);
+        var polygon_feature = new ol.Feature({
+            geometry: new ol.geom.Polygon(
+                [ [ [xCoord,yCoord],
+                    [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]
+            )
+        });
+        vectorSource.addFeature(polygon_feature);
+    };
 
     var GetURLparameter = function () {
         var sPageURL = decodeURIComponent(window.location.search.substring(1));
