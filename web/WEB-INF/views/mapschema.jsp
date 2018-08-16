@@ -14,6 +14,9 @@
     <div id="popup"></div>
 </div>
 <script>
+    var arrCenter =[];
+    var arrCoordsFeature = [];
+    var angleRad = 0;
     var radiusDependZoom = 0;
     var service = 'http://localhost:8080/';
     var raster = new ol.layer.Tile({
@@ -88,7 +91,8 @@
         if (zoom < 18) {
             radiusDependZoom = 5;
             vectorSource.clear();
-            DrawMuftaSchema();
+            // DrawMuftaSchema();
+            GetURLparameter();
         } else if (zoom < 19){
             radiusDependZoom = 15;
             vectorSource.clear();
@@ -105,6 +109,7 @@
             radiusDependZoom = 300;
             vectorSource.clear();
             GetURLparameter();
+            DrawMuftaSchema();
         }
         /*vectorSource.clear();
         GetURLparameter();*/
@@ -112,12 +117,14 @@
 
     //тренируюсь рисовать схему муфты
     var DrawMuftaSchema = function () {
-        var xCoord = 4466692.398383205;
-        var yCoord = 5756913.30739783;
+        /*var xCoord = 4466692.398383205;
+        var yCoord = 5756913.30739783;*/
+        var xCoord = arrCenter[0] + 25;
+        var yCoord = arrCenter[1] - 12;
         var arrPointCoord = [];
         var arrPolygonCoord = [];
 
-        arrPointCoord = [];
+        /*arrPointCoord = [];
         arrPointCoord.push(xCoord);
         arrPointCoord.push(yCoord);
         arrPolygonCoord.push(arrPointCoord);
@@ -140,17 +147,64 @@
         arrPointCoord = [];
         arrPointCoord.push(xCoord);
         arrPointCoord.push(yCoord);
+        arrPolygonCoord.push(arrPointCoord);*/
+
+        arrPointCoord[0] = xCoord;
+        arrPointCoord[1] = yCoord;
+        arrPolygonCoord.push(arrPointCoord);
+        arrPointCoord = [];
+        arrPointCoord[0] = xCoord+50;
+        arrPointCoord[1] = yCoord;
+        arrPolygonCoord.push(arrPointCoord);
+        arrPointCoord = [];
+        arrPointCoord[0] = xCoord+50;
+        arrPointCoord[1] = yCoord+25;
+        arrPolygonCoord.push(arrPointCoord);
+        arrPointCoord = [];
+        arrPointCoord[0] = xCoord;
+        arrPointCoord[1] = yCoord+25;
+        arrPolygonCoord.push(arrPointCoord);
+        arrPointCoord = [];
+        arrPointCoord[0] = xCoord;
+        arrPointCoord[1] = yCoord;
         arrPolygonCoord.push(arrPointCoord);
 
-        var polygon = new ol.geom.Polygon([ [ [xCoord,yCoord],
-            [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]);
+        /*var polygon = new ol.geom.Polygon([ [ [xCoord,yCoord],
+            [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]);*/
+        /*arrCenter[0] = 4466692.398383205;
+        arrCenter[1] = 5756913.30739783;*/
+        angleRad = Math.PI/4;
+        arrCoordsFeature = [];
+        arrCoordsFeature = arrPolygonCoord;
+        RotatePolygon();
         var polygon_feature = new ol.Feature({
             geometry: new ol.geom.Polygon(
-                [ [ [xCoord,yCoord],
-                    [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]
+                //[ [ [xCoord,yCoord], [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]
+                [arrCoordsFeature]
             )
         });
+        // polygon_feature.rotate(Math.PI / 2.0, ol.proj.transform([-16,-22], 'EPSG:4326', 'EPSG:3857'));
         vectorSource.addFeature(polygon_feature);
+
+    };
+
+    var RotatePolygon = function () {
+        var arrPolygonCoord = [];
+        var xCenter = arrCenter[0];
+        var yCenter = arrCenter[1];
+        for (i in arrCoordsFeature){
+            var arrPointOfPolygon = arrCoordsFeature[i];
+            var x = arrPointOfPolygon[0];
+            var y = arrPointOfPolygon[1];
+            console.log('x='+x + ', y='+y);
+            arrPointOfPolygon = [];
+            arrPointOfPolygon[0] = xCenter + (x - xCenter)*Math.cos(angleRad) - (y - yCenter)*Math.sin(angleRad);
+            arrPointOfPolygon[1] = yCenter + (y - yCenter)*Math.cos(angleRad) + (x - xCenter)*Math.sin(angleRad);
+            console.log(arrPointOfPolygon[0] + ', ' + arrPointOfPolygon[1]);
+            arrPolygonCoord.push(arrPointOfPolygon);
+        }
+        arrCoordsFeature = [];
+        arrCoordsFeature = arrPolygonCoord;
     };
 
     var GetURLparameter = function () {
@@ -218,6 +272,7 @@
                     }
 
                     if (geomType == 'Point'){
+                        arrCenter = arrPointCoord;
                         var point_feature = new ol.Feature({
                             geometry: new ol.geom.Point(
                                 arrPointCoord
