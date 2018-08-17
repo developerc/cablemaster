@@ -14,6 +14,10 @@
     <div id="popup"></div>
 </div>
 <script>
+    var colorThread = '';
+    var colorModule = '';
+    var strokeColor = '';
+    var featurePropertyName = '';
     var arrCenter =[];
     var arrCoordsFeature = [];
     var angleRad = 0;
@@ -49,7 +53,7 @@
                     color: 'rgba(255, 255, 255, 0.2)'
                 }),
                 stroke: new ol.style.Stroke({
-                    color: '#3428ff',
+                    color: strokeColor,
                     width: 2
                 }),
                 image: new ol.style.Circle({
@@ -59,6 +63,7 @@
                         color: '#befcff'
                     }),
                     stroke: new ol.style.Stroke({
+                        // color: '#ff0705',
                         color: '#3428ff',
                         width: 2
                     })
@@ -68,8 +73,8 @@
                     fill: new ol.style.Fill({ color: '#000' }),
                     stroke: new ol.style.Stroke({
                         color: '#fff', width: 2
-                    })/*,
-                    text: featurePropertyName*/
+                    }),
+                    text: colorThread + ' ' + colorModule
                 })
             })
         ]
@@ -214,7 +219,16 @@
         for (var i = 0; i < sURLVariables.length; i++) {
             var sParameterName = sURLVariables[i].split('=');
             console.log(sParameterName[1]);
-            var propid = sParameterName[1];
+            var fullParameter = sParameterName[1].split(';');
+            var propid = fullParameter[0];
+            colorThread = fullParameter[1];
+            colorModule = fullParameter[2];
+            if (colorThread = 'red'){
+                strokeColor = '#ff0705';
+            } else {
+                strokeColor = '#3428ff';
+            }
+            console.log('propid='+propid);
             AddLineStringByPropertyId(propid);
         }
     };
@@ -266,7 +280,7 @@
                             featurePropertyName = '';
                         }
                         linestring_feature.setStyle(styleFunction());*/
-                       // linestring_feature.setStyle(styleFunction());
+                       linestring_feature.setStyle(styleFunction());
                         vectorSource.addFeature(linestring_feature);
                         console.log('это LineString');
                     }
@@ -284,6 +298,7 @@
                             featurePropertyName = '';
                         }
                         point_feature.setStyle(styleFunction());*/
+
                         point_feature.setStyle(styleFunction());
                         vectorSource.addFeature(point_feature);
                         console.log('это Point');

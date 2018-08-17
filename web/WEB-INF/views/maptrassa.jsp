@@ -55,7 +55,9 @@
         for (var i = 0; i < sURLVariables.length; i++) {
             var sParameterName = sURLVariables[i].split('=');
             console.log(sParameterName[1]);
-            var propid = sParameterName[1];
+            var fullParameter = sParameterName[1].split(';');
+            var propid = fullParameter[0];
+            console.log('propid='+propid);
             AddLineStringByPropertyId(propid);
         }
     };

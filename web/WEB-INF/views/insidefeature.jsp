@@ -294,8 +294,8 @@
                 trassaTableCableHtml+= '<th>' + Data.reserved + '</' + 'th>';
                 trassaTableCableHtml+= '</' +'tr>';
                 retId = Data.connectedTo;
-                arrPropertyId.push(Data.propertyId);
-                console.log('Data.propertyId='+Data.propertyId);
+                arrPropertyId.push(Data.propertyId + ';' + Data.colorThread + ';' + Data.reserved);
+                console.log('arrPropertyId[i]='+Data.propertyId + ';' + Data.colorThread + ';' + Data.reserved);
                 /* trassaTableCableHtml+= '</' +'table>';
                  $('#tableCable').html(trassaTableCableHtml);*/
             },
