@@ -11,9 +11,13 @@
 </head>
 <body>
 <div id="map" class="map">
-    <div id="popup"></div>
 </div>
+<form class="form-inline">
+    <input type="text" id="propertyId" value="propertyId" size="30">
+    <input type="checkbox" name="cb1" id="check1" value="0"/>
+</form>
 <script>
+    var arrData;
     var colorThread = '';
     var colorModule = '';
     var strokeColor = '';
@@ -114,7 +118,9 @@
             radiusDependZoom = 300;
             vectorSource.clear();
             GetURLparameter();
-            DrawMuftaSchema();
+            if($('#check1').prop('checked')) {
+                DrawMuftaSchema();
+            }
         }
         /*vectorSource.clear();
         GetURLparameter();*/
@@ -122,38 +128,25 @@
 
     //тренируюсь рисовать схему муфты
     var DrawMuftaSchema = function () {
-        /*var xCoord = 4466692.398383205;
-        var yCoord = 5756913.30739783;*/
-        var xCoord = arrCenter[0] + 25;
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/propertyid/' + $("#propertyId").val(),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                arrData = JSON.parse(stringData);
+                HandleArrData();
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting data for draw mufta')
+            }
+        });
+        /*var xCoord = arrCenter[0] + 25;
         var yCoord = arrCenter[1] - 12;
         var arrPointCoord = [];
         var arrPolygonCoord = [];
 
-        /*arrPointCoord = [];
-        arrPointCoord.push(xCoord);
-        arrPointCoord.push(yCoord);
-        arrPolygonCoord.push(arrPointCoord);
-
-        arrPointCoord = [];
-        arrPointCoord.push(xCoord+1000);
-        arrPointCoord.push(yCoord);
-        arrPolygonCoord.push(arrPointCoord);
-
-        arrPointCoord = [];
-        arrPointCoord.push(xCoord+1000);
-        arrPointCoord.push(yCoord+1000);
-        arrPolygonCoord.push(arrPointCoord);
-
-        arrPointCoord = [];
-        arrPointCoord.push(xCoord);
-        arrPointCoord.push(yCoord+1000);
-        arrPolygonCoord.push(arrPointCoord);
-
-        arrPointCoord = [];
-        arrPointCoord.push(xCoord);
-        arrPointCoord.push(yCoord);
-        arrPolygonCoord.push(arrPointCoord);*/
-
         arrPointCoord[0] = xCoord;
         arrPointCoord[1] = yCoord;
         arrPolygonCoord.push(arrPointCoord);
@@ -174,10 +167,6 @@
         arrPointCoord[1] = yCoord;
         arrPolygonCoord.push(arrPointCoord);
 
-        /*var polygon = new ol.geom.Polygon([ [ [xCoord,yCoord],
-            [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]);*/
-        /*arrCenter[0] = 4466692.398383205;
-        arrCenter[1] = 5756913.30739783;*/
         angleRad = Math.PI/4;
         arrCoordsFeature = [];
         arrCoordsFeature = arrPolygonCoord;
@@ -188,9 +177,15 @@
                 [arrCoordsFeature]
             )
         });
-        // polygon_feature.rotate(Math.PI / 2.0, ol.proj.transform([-16,-22], 'EPSG:4326', 'EPSG:3857'));
-        vectorSource.addFeature(polygon_feature);
+        vectorSource.addFeature(polygon_feature);*/
 
+    };
+
+    var HandleArrData = function () {
+        for (i in arrData) {
+            console.log('arrData[i]=' + arrData[i].id + ', '+arrData[i].connectedTo+ ', '+arrData[i].propertyId+ ', '+ arrData[i].colorThread+ ', '+ arrData[i].description+ ', '+ arrData[i].label+ ', '+ arrData[i].reserved);
+            console.log('arrCenter longitude='+arrCenter[0]+'arrCenter latitude='+arrCenter[1]);
+        }
     };
 
     var RotatePolygon = function () {
@@ -223,10 +218,16 @@
             var propid = fullParameter[0];
             colorThread = fullParameter[1];
             colorModule = fullParameter[2];
-            if (colorThread = 'red'){
+            if (colorThread == 'red'){
                 strokeColor = '#ff0705';
-            } else {
+            } else if (colorThread == 'blue'){
                 strokeColor = '#3428ff';
+            } else if (colorThread == 'green'){
+                strokeColor = '#09ff25';
+            } else if (colorThread == 'yellow'){
+                strokeColor = '#fff012';
+            } else {
+                strokeColor = '#78ffff';
             }
             console.log('propid='+propid);
             AddLineStringByPropertyId(propid);
@@ -258,12 +259,14 @@
                     var geomType = objFeature.geometryType;
                     var arrGeometryCoord = objFeature.geometryCoord;
                     var arrLineCoord = [];
+                    var propFeatureId;
                     for (k in arrGeometryCoord){
                         var arrPointCoord = [];
                         var objGeomCoordItem = arrGeometryCoord[k];
                         arrPointCoord[0] = objGeomCoordItem.longitude;
                         arrPointCoord[1] = objGeomCoordItem.latitude;
                         arrLineCoord.push(arrPointCoord);
+                        propFeatureId = objGeomCoordItem.propertyId;
                         console.log('lon=' + objGeomCoordItem.longitude + ', lat=' + objGeomCoordItem.latitude);
                     }
 
@@ -286,7 +289,12 @@
                     }
 
                     if (geomType == 'Point'){
-                        arrCenter = arrPointCoord;
+                        if($('#check1').prop('checked')) {
+                            if (propFeatureId == $("#propertyId").val()) {
+                                arrCenter = arrPointCoord;
+                            }
+                        }
+
                         var point_feature = new ol.Feature({
                             geometry: new ol.geom.Point(
                                 arrPointCoord
@@ -298,7 +306,8 @@
                             featurePropertyName = '';
                         }
                         point_feature.setStyle(styleFunction());*/
-
+                        colorThread = '';
+                        colorModule = '';
                         point_feature.setStyle(styleFunction());
                         vectorSource.addFeature(point_feature);
                         console.log('это Point');
