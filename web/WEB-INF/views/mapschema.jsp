@@ -186,14 +186,17 @@
         var y1;
         var x2;
         var y2;
-        var arrPointCoord = [];
-        var arrLineCoord = [];
+        arrCoordsFeature = []; //будем хранить координаты отрезков в схеме
+       /* var arrPointCoord = [];
+        var arrLineCoord = [];*/
         for (i in arrData) {
             console.log('arrData[i]=' + arrData[i].id + ', '+arrData[i].connectedTo+ ', '+arrData[i].propertyId+ ', '+ arrData[i].colorThread+ ', '+ arrData[i].description+ ', '+ arrData[i].label+ ', '+ arrData[i].reserved);
             console.log('arrCenter longitude='+arrCenter[0]+'arrCenter latitude='+arrCenter[1]);
             // if (i == 0){
-            arrPointCoord = [];
-            arrLineCoord = [];
+            /*arrPointCoord = [];
+            arrLineCoord = [];*/
+            var arrPointCoord = [];
+            var arrLineCoord = [];
                 x1 = arrCenter[0] +25;
                 y1 = arrCenter[1];
                 arrPointCoord[0] = x1;
@@ -205,6 +208,7 @@
             arrPointCoord[0] = x2;
             arrPointCoord[1] = y2;
                 arrLineCoord.push(arrPointCoord);
+                arrCoordsFeature.push(arrLineCoord);
                 var linestring_feature = new ol.Feature({
                     geometry: new ol.geom.LineString(
                         arrLineCoord
@@ -213,6 +217,10 @@
                 vectorSource.addFeature(linestring_feature);
             // }
         }
+    };
+
+    var RotateLine = function () {
+
     };
 
     var RotatePolygon = function () {
