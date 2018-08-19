@@ -21,9 +21,11 @@
     var colorThread = '';
     var colorModule = '';
     var strokeColor = '';
+    var strokeColorM = '';
     var featurePropertyName = '';
     var arrCenter =[];
     var arrCoordsFeature = [];
+    var arrSingleLine = [];
     var angleRad = 0;
     var radiusDependZoom = 0;
     var service = 'http://localhost:8080/';
@@ -79,6 +81,41 @@
                         color: '#fff', width: 2
                     }),
                     text: colorThread + ' ' + colorModule
+                })
+            })
+        ]
+    };
+
+    var styleMuftaFunction = function () {
+        return[
+            new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: strokeColorM,
+                    width: 2
+                }),
+                image: new ol.style.Circle({
+                    radius: radiusDependZoom,
+                    // radius: 20,
+                    fill: new ol.style.Fill({
+                        color: '#befcff'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        // color: '#ff0705',
+                        color: '#3428ff',
+                        width: 2
+                    })
+                }),
+                text: new ol.style.Text({
+                    font: '12px Calibri,sans-serif',
+                    fill: new ol.style.Fill({ color: '#000' }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff', width: 2
+                    }),
+                    text: colorThread + ' ' + colorModule,
+                    rotation: -1*angleRad
                 })
             })
         ]
@@ -182,6 +219,7 @@
     };
 
     var HandleArrData = function () {
+        var singleRad = Math.PI/90;
         var x1;
         var y1;
         var x2;
@@ -192,7 +230,6 @@
         for (i in arrData) {
             console.log('arrData[i]=' + arrData[i].id + ', '+arrData[i].connectedTo+ ', '+arrData[i].propertyId+ ', '+ arrData[i].colorThread+ ', '+ arrData[i].description+ ', '+ arrData[i].label+ ', '+ arrData[i].reserved);
             console.log('arrCenter longitude='+arrCenter[0]+'arrCenter latitude='+arrCenter[1]);
-            // if (i == 0){
             /*arrPointCoord = [];
             arrLineCoord = [];*/
             var arrPointCoord = [];
@@ -208,19 +245,82 @@
             arrPointCoord[0] = x2;
             arrPointCoord[1] = y2;
                 arrLineCoord.push(arrPointCoord);
-                arrCoordsFeature.push(arrLineCoord);
-                var linestring_feature = new ol.Feature({
-                    geometry: new ol.geom.LineString(
-                        arrLineCoord
-                    )
-                });
-                vectorSource.addFeature(linestring_feature);
-            // }
+
+                arrSingleLine = [];
+                angleRad = singleRad * i;
+                arrData[i].angleRad = angleRad;
+                arrSingleLine = arrLineCoord;
+               RotateLine();
+
+            arrCoordsFeature.push(arrSingleLine);
+
+            /*if (arrData[i].colorThread == 'red'){
+                strokeColorM = '#ff0705';
+            } else if (arrData[i].colorThread == 'blue'){
+                strokeColorM = '#3428ff';
+            } else if (arrData[i].colorThread == 'green'){
+                strokeColorM = '#09ff25';
+            } else if (arrData[i].colorThread == 'yellow'){
+                strokeColorM = '#fff012';
+            } else {
+                strokeColorM = '#78ffff';
+            }
+
+            colorThread = arrData[i].id +' ' + arrData[i].colorThread;
+            colorModule = arrData[i].reserved;
+//почему-то все линии одного цвета и надписи
+            var linestring_feature = new ol.Feature({
+                geometry: new ol.geom.LineString(
+                    arrSingleLine
+                )
+            });
+
+            linestring_feature.setStyle(styleMuftaFunction());
+                vectorSource.addFeature(linestring_feature);*/
+        }
+
+        for (i in arrData) {
+            if (arrData[i].colorThread == 'red') {
+                strokeColorM = '#ff0705';
+            } else if (arrData[i].colorThread == 'blue') {
+                strokeColorM = '#3428ff';
+            } else if (arrData[i].colorThread == 'green') {
+                strokeColorM = '#09ff25';
+            } else if (arrData[i].colorThread == 'yellow') {
+                strokeColorM = '#fff012';
+            } else {
+                strokeColorM = '#78ffff';
+            }
+            colorThread = arrData[i].id + ' ' + arrData[i].colorThread;
+            colorModule = arrData[i].reserved;
+            angleRad = arrData[i].angleRad;
+            var linestring_feature = new ol.Feature({
+                geometry: new ol.geom.LineString(
+                    arrCoordsFeature[i]
+                )
+            });
+            linestring_feature.setStyle(styleMuftaFunction());
+            vectorSource.addFeature(linestring_feature);
         }
     };
 
     var RotateLine = function () {
-
+        var arrLineCoord = [];
+        var xCenter = arrCenter[0];
+        var yCenter = arrCenter[1];
+        for (i in arrSingleLine){
+            var arrPointOfLine = arrSingleLine[i];
+            var x = arrPointOfLine[0];
+            var y = arrPointOfLine[1];
+            console.log('x='+x + ', y='+y);
+            // arrLineCoord = [];
+            arrPointOfLine[0] = xCenter + (x - xCenter)*Math.cos(angleRad) - (y - yCenter)*Math.sin(angleRad);
+            arrPointOfLine[1] = yCenter + (y - yCenter)*Math.cos(angleRad) + (x - xCenter)*Math.sin(angleRad);
+            console.log('rotate x='+arrPointOfLine[0] + ', rotate y=' + arrPointOfLine[1]);
+            arrLineCoord.push(arrPointOfLine);
+        }
+        arrSingleLine = [];
+        arrSingleLine = arrLineCoord;
     };
 
     var RotatePolygon = function () {
