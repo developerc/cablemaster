@@ -22,6 +22,7 @@
     var colorModule = '';
     var strokeColor = '';
     var strokeColorM = '';
+    var idPropertyName = '';
     var featurePropertyName = '';
     var arrCenter =[];
     var arrCoordsFeature = [];
@@ -114,7 +115,7 @@
                     stroke: new ol.style.Stroke({
                         color: '#fff', width: 2
                     }),
-                    text: colorThread + ' ' + colorModule,
+                    text: colorThread + ' ' + colorModule + ' ' + idPropertyName,
                     rotation: -1*angleRad
                 })
             })
@@ -247,9 +248,11 @@
                 arrLineCoord.push(arrPointCoord);
 
                 arrSingleLine = [];
-                angleRad = singleRad * i;
                 arrData[i].angleRad = angleRad;
                 arrSingleLine = arrLineCoord;
+
+               angleRad = singleRad * i;  //угол поворота
+               FindAngleRotate(arrData[i].label);
                RotateLine();
 
             arrCoordsFeature.push(arrSingleLine);
@@ -294,6 +297,7 @@
             colorThread = arrData[i].id + ' ' + arrData[i].colorThread;
             colorModule = arrData[i].reserved;
             angleRad = arrData[i].angleRad;
+            idPropertyName = arrData[i].label;
             var linestring_feature = new ol.Feature({
                 geometry: new ol.geom.LineString(
                     arrCoordsFeature[i]
@@ -302,6 +306,13 @@
             linestring_feature.setStyle(styleMuftaFunction());
             vectorSource.addFeature(linestring_feature);
         }
+    };
+
+    var FindAngleRotate = function (arrDataLabel) {
+        var propIdName = arrDataLabel.split('_');
+        var propId = propIdName[0];
+        console.log('for angle propId=' + propId);
+        //вычисляем угол для каждой линии
     };
 
     var RotateLine = function () {
