@@ -23,7 +23,10 @@
     var strokeColor = '';
     var strokeColorM = '';
     var idPropertyName = '';
+    var singleRad = Math.PI/90;
     var featurePropertyName = '';
+    var arrNextAngle = [];
+    var objNextAngle = {};
     var arrCenter =[];
     var arrCoordsFeature = [];
     var arrSingleLine = [];
@@ -174,6 +177,8 @@
             success: function (result) {
                 var stringData = JSON.stringify(result);
                 arrData = JSON.parse(stringData);
+                arrNextAngle = [];
+                objNextAngle = {};
                 HandleArrData();
             },
             error: function (jqXHR, testStatus, errorThrown) {
@@ -220,7 +225,7 @@
     };
 
     var HandleArrData = function () {
-        var singleRad = Math.PI/90;
+        // var singleRad = Math.PI/90;
         var x1;
         var y1;
         var x2;
@@ -248,38 +253,14 @@
                 arrLineCoord.push(arrPointCoord);
 
                 arrSingleLine = [];
-                arrData[i].angleRad = angleRad;
                 arrSingleLine = arrLineCoord;
 
-               angleRad = singleRad * i;  //угол поворота
+              // angleRad = singleRad * i;  //угол поворота
                FindAngleRotate(arrData[i].label);
                RotateLine();
-
+            arrData[i].angleRad = angleRad;
             arrCoordsFeature.push(arrSingleLine);
 
-            /*if (arrData[i].colorThread == 'red'){
-                strokeColorM = '#ff0705';
-            } else if (arrData[i].colorThread == 'blue'){
-                strokeColorM = '#3428ff';
-            } else if (arrData[i].colorThread == 'green'){
-                strokeColorM = '#09ff25';
-            } else if (arrData[i].colorThread == 'yellow'){
-                strokeColorM = '#fff012';
-            } else {
-                strokeColorM = '#78ffff';
-            }
-
-            colorThread = arrData[i].id +' ' + arrData[i].colorThread;
-            colorModule = arrData[i].reserved;
-//почему-то все линии одного цвета и надписи
-            var linestring_feature = new ol.Feature({
-                geometry: new ol.geom.LineString(
-                    arrSingleLine
-                )
-            });
-
-            linestring_feature.setStyle(styleMuftaFunction());
-                vectorSource.addFeature(linestring_feature);*/
         }
 
         for (i in arrData) {
@@ -309,10 +290,73 @@
     };
 
     var FindAngleRotate = function (arrDataLabel) {
-        var propIdName = arrDataLabel.split('_');
-        var propId = propIdName[0];
-        console.log('for angle propId=' + propId);
+        /*var propIdName = arrDataLabel.split('_');
+        var propId = propIdName[0];*/
+        var nextAngleItem = [];
+        console.log('for angle arrDataLabel=' + arrDataLabel);
+
+        arrNextAngle.push(arrDataLabel);
+
+
         //вычисляем угол для каждой линии
+        /*if (arrNextAngle.length == 0){
+            nextAngleItem = [];
+            nextAngleItem[0] = propId;
+            nextAngleItem[1] = 0;
+            arrNextAngle.push(nextAngleItem);
+            angleRad = 0;
+            console.log('for angle angleRad = 0 angleRad=' + angleRad);
+        } else {
+            var flagThereIs = false;
+            for (i in arrNextAngle){
+                nextAngleItem = [];
+                nextAngleItem = arrNextAngle[i];
+                if (nextAngleItem[0] == propId){
+                    switch (i){
+                        case 0:
+                            nextAngleItem[1] = nextAngleItem[1] + singleRad;
+                            angleRad = nextAngleItem[1];
+                            arrNextAngle[i] = nextAngleItem;
+                            break;
+                        case 1:
+                            nextAngleItem[1] = nextAngleItem[1] + singleRad;
+                            angleRad = Math.PI + nextAngleItem[1];
+                            arrNextAngle[i] = nextAngleItem;
+                            break;
+                        case 2:
+                            nextAngleItem[1] = nextAngleItem[1] + singleRad;
+                            angleRad = (6/4)*Math.PI + nextAngleItem[1];
+                            arrNextAngle[i] = nextAngleItem;
+                            break;
+                    }
+                    flagThereIs = true;
+                    console.log('for angle  nextAngleItem[0] == propId  propId=' + propId + 'angleRad=' + angleRad);
+                }
+            }
+            if (flagThereIs == false){
+                nextAngleItem = [];
+                nextAngleItem[0] = propId;
+                nextAngleItem[1] = 0;
+                arrNextAngle.push(nextAngleItem);
+                var countAngleItem = arrNextAngle.length;
+                switch (countAngleItem-1){
+                    case 1:
+                        // nextAngleItem[1] = nextAngleItem[1] + singleRad;
+                        angleRad = Math.PI;
+                        arrNextAngle[countAngleItem-1] = nextAngleItem;
+                        console.log('for angle case:1 angleRad=' + angleRad);
+                        break;
+                    case 2:
+                        // nextAngleItem[1] = nextAngleItem[1] + singleRad;
+                        angleRad = (6/4)*Math.PI;
+                        arrNextAngle[countAngleItem-1] = nextAngleItem;
+                        console.log('for angle case:2 angleRad=' + angleRad);
+                        break;
+                }
+            }
+
+        }*/
+
     };
 
     var RotateLine = function () {
