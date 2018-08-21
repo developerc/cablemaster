@@ -26,6 +26,7 @@
     var singleRad = Math.PI/90;
     var featurePropertyName = '';
     var arrNextAngle = [];
+    var arrItemsPropertyId = [];
     var objNextAngle = {};
     var arrCenter =[];
     var arrCoordsFeature = [];
@@ -177,6 +178,7 @@
             success: function (result) {
                 var stringData = JSON.stringify(result);
                 arrData = JSON.parse(stringData);
+                arrItemsPropertyId = [];
                 arrNextAngle = [];
                 objNextAngle = {};
                 HandleArrData();
@@ -257,6 +259,7 @@
 
               // angleRad = singleRad * i;  //угол поворота
                FindAngleRotate(arrData[i].label);
+
                RotateLine();
             arrData[i].angleRad = angleRad;
             arrCoordsFeature.push(arrSingleLine);
@@ -289,14 +292,31 @@
         }
     };
 
-    var FindAngleRotate = function (arrDataLabel) {
+    var FindAngleRotate = function (itemArrDataLabel) {
         /*var propIdName = arrDataLabel.split('_');
         var propId = propIdName[0];*/
         var nextAngleItem = [];
-        console.log('for angle arrDataLabel=' + arrDataLabel);
+        console.log('for angle itemArrDataLabel=' + itemArrDataLabel);
 
-        arrNextAngle.push(arrDataLabel);
+        arrNextAngle.push(itemArrDataLabel);
 
+        var  count = {};
+        arrNextAngle.forEach(function(itemArrDataLabel) { count[itemArrDataLabel] = (count[itemArrDataLabel]||0) + 1;}); //подсчитываем число вхождений
+        console.log(count);
+        // var isInArrItemsPropertyId = (itemArrDataLabel in arrItemsPropertyId);
+        if (arrItemsPropertyId.indexOf(itemArrDataLabel == -1)){
+            arrItemsPropertyId.push(itemArrDataLabel);
+        }
+        console.log('arrItemsPropertyId='+arrItemsPropertyId);
+
+        /*for (i in arrNextAngle){
+            if (arrNextAngle[i] in objNextAngle){
+                //если элемент массива содержится как property в обьекте работаем с обьектом
+            } else {
+                objNextAngle.arrNextAngle[i] = 1;
+
+            }
+        }*/
 
         //вычисляем угол для каждой линии
         /*if (arrNextAngle.length == 0){
