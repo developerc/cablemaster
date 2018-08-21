@@ -182,49 +182,13 @@
                 arrNextAngle = [];
                 objNextAngle = {};
                 HandleArrData();
+                ShowLines();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error getting data for draw mufta')
             }
         });
-        /*var xCoord = arrCenter[0] + 25;
-        var yCoord = arrCenter[1] - 12;
-        var arrPointCoord = [];
-        var arrPolygonCoord = [];
-
-        arrPointCoord[0] = xCoord;
-        arrPointCoord[1] = yCoord;
-        arrPolygonCoord.push(arrPointCoord);
-        arrPointCoord = [];
-        arrPointCoord[0] = xCoord+50;
-        arrPointCoord[1] = yCoord;
-        arrPolygonCoord.push(arrPointCoord);
-        arrPointCoord = [];
-        arrPointCoord[0] = xCoord+50;
-        arrPointCoord[1] = yCoord+25;
-        arrPolygonCoord.push(arrPointCoord);
-        arrPointCoord = [];
-        arrPointCoord[0] = xCoord;
-        arrPointCoord[1] = yCoord+25;
-        arrPolygonCoord.push(arrPointCoord);
-        arrPointCoord = [];
-        arrPointCoord[0] = xCoord;
-        arrPointCoord[1] = yCoord;
-        arrPolygonCoord.push(arrPointCoord);
-
-        angleRad = Math.PI/4;
-        arrCoordsFeature = [];
-        arrCoordsFeature = arrPolygonCoord;
-        RotatePolygon();
-        var polygon_feature = new ol.Feature({
-            geometry: new ol.geom.Polygon(
-                //[ [ [xCoord,yCoord], [xCoord,yCoord+10000],[xCoord+10000,yCoord+10000],[xCoord+10000,yCoord],[xCoord,yCoord] ] ]
-                [arrCoordsFeature]
-            )
-        });
-        vectorSource.addFeature(polygon_feature);*/
-
-    };
+            };
 
     var HandleArrData = function () {
         // var singleRad = Math.PI/90;
@@ -266,6 +230,33 @@
 
         }
 
+        /*for (i in arrData) {
+            if (arrData[i].colorThread == 'red') {
+                strokeColorM = '#ff0705';
+            } else if (arrData[i].colorThread == 'blue') {
+                strokeColorM = '#3428ff';
+            } else if (arrData[i].colorThread == 'green') {
+                strokeColorM = '#09ff25';
+            } else if (arrData[i].colorThread == 'yellow') {
+                strokeColorM = '#fff012';
+            } else {
+                strokeColorM = '#78ffff';
+            }
+            colorThread = arrData[i].id + ' ' + arrData[i].colorThread;
+            colorModule = arrData[i].reserved;
+            angleRad = arrData[i].angleRad;
+            idPropertyName = arrData[i].label;
+            var linestring_feature = new ol.Feature({
+                geometry: new ol.geom.LineString(
+                    arrCoordsFeature[i]
+                )
+            });
+            linestring_feature.setStyle(styleMuftaFunction());
+            vectorSource.addFeature(linestring_feature);
+        }*/
+    };
+
+    var ShowLines = function () {
         for (i in arrData) {
             if (arrData[i].colorThread == 'red') {
                 strokeColorM = '#ff0705';
@@ -303,20 +294,48 @@
         var  count = {};
         arrNextAngle.forEach(function(itemArrDataLabel) { count[itemArrDataLabel] = (count[itemArrDataLabel]||0) + 1;}); //подсчитываем число вхождений
         console.log(count);
-        // var isInArrItemsPropertyId = (itemArrDataLabel in arrItemsPropertyId);
-        if (arrItemsPropertyId.indexOf(itemArrDataLabel == -1)){
+
+        var flagThereIsItem = false;
+        arrItemsPropertyId.forEach(function (value) {
+           if (value == itemArrDataLabel){
+               flagThereIsItem = true;
+           }
+        });
+        if (flagThereIsItem == false){
             arrItemsPropertyId.push(itemArrDataLabel);
         }
         console.log('arrItemsPropertyId='+arrItemsPropertyId);
+        var indOf = arrItemsPropertyId.indexOf(itemArrDataLabel);
+        console.log('indexOf=' + indOf);
+        console.log('count[itemArrDataLabel]='+count[itemArrDataLabel]);
 
-        /*for (i in arrNextAngle){
-            if (arrNextAngle[i] in objNextAngle){
-                //если элемент массива содержится как property в обьекте работаем с обьектом
-            } else {
-                objNextAngle.arrNextAngle[i] = 1;
+        switch (indOf){
+            case 0:
+                angleRad = singleRad * count[itemArrDataLabel];
+                break;
+            case 1:
+                angleRad = singleRad * count[itemArrDataLabel] + Math.PI;
+                break;
+            case 2:
+                angleRad = singleRad * count[itemArrDataLabel] + (6/4)*Math.PI;
+                break;
+            case 3:
+                angleRad = singleRad * count[itemArrDataLabel] + (1/2)*Math.PI;
+                break;
+            case 4:
+                angleRad = singleRad * count[itemArrDataLabel] + (1/4)*Math.PI;
+                break;
+            case 5:
+                angleRad = singleRad * count[itemArrDataLabel] + (5/4)*Math.PI;
+                break;
+            case 6:
+                angleRad = singleRad * count[itemArrDataLabel] + (3/4)*Math.PI;
+                break;
+            case 7:
+                angleRad = singleRad * count[itemArrDataLabel] + (7/4)*Math.PI;
+                break;
+        }
 
-            }
-        }*/
 
         //вычисляем угол для каждой линии
         /*if (arrNextAngle.length == 0){
