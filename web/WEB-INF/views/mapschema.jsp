@@ -35,6 +35,7 @@
     var angleRad = 0;
     var radiusDependZoom = 0;
     var service = 'http://localhost:8080/';
+    var colorInside = '#000000';
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()
     });
@@ -124,6 +125,40 @@
                     text: colorThread + ' ' + colorModule + ' ' + idPropertyName,
                     rotation: angleTextRad
                 })
+            })
+        ]
+    };
+
+    var styleInsideFunction = function () {
+        return[
+            new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: colorInside,
+                    width: 2
+                })/*,
+                image: new ol.style.Circle({
+                    radius: radiusDependZoom,
+                    // radius: 20,
+                    fill: new ol.style.Fill({
+                        color: '#befcff'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        // color: '#ff0705',
+                        color: '#3428ff',
+                        width: 2
+                    })
+                }),
+                text: new ol.style.Text({
+                    font: '12px Calibri,sans-serif',
+                    fill: new ol.style.Fill({ color: '#000' }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff', width: 2
+                    }),
+                    text: colorThread + ' ' + colorModule
+                })*/
             })
         ]
     };
@@ -303,14 +338,23 @@
                     arrLineCoord
                 )
             });
-            // linestring_feature.setStyle(styleFunction());
+            switch (colorInside){
+                case '#000000':
+                    colorInside = '#606060';
+                    break;
+                case '#606060':
+                    colorInside = '#969696';
+                    break;
+                case '#969696':
+                    colorInside = '#000000';
+                    break;
+            }
+            linestring_feature.setStyle(styleInsideFunction());
             vectorSource.addFeature(linestring_feature);
         }
     };
 
     var FindAngleRotate = function (itemArrDataLabel) {
-        /*var propIdName = arrDataLabel.split('_');
-        var propId = propIdName[0];*/
         var nextAngleItem = [];
         console.log('for angle itemArrDataLabel=' + itemArrDataLabel);
 
@@ -339,88 +383,27 @@
                 angleRad = singleRad * count[itemArrDataLabel] + Math.PI;
                 break;
             case 1:
-                angleRad = singleRad * count[itemArrDataLabel];
+                angleRad = -1 * singleRad * count[itemArrDataLabel];
                 break;
             case 2:
-                angleRad = singleRad * count[itemArrDataLabel] + (6/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (6/4)*Math.PI;
                 break;
             case 3:
-                angleRad = singleRad * count[itemArrDataLabel] + (1/2)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (1/2)*Math.PI;
                 break;
             case 4:
-                angleRad = singleRad * count[itemArrDataLabel] + (1/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (1/4)*Math.PI;
                 break;
             case 5:
-                angleRad = singleRad * count[itemArrDataLabel] + (5/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (5/4)*Math.PI;
                 break;
             case 6:
-                angleRad = singleRad * count[itemArrDataLabel] + (3/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (3/4)*Math.PI;
                 break;
             case 7:
-                angleRad = singleRad * count[itemArrDataLabel] + (7/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (7/4)*Math.PI;
                 break;
         }
-
-
-        //вычисляем угол для каждой линии
-        /*if (arrNextAngle.length == 0){
-            nextAngleItem = [];
-            nextAngleItem[0] = propId;
-            nextAngleItem[1] = 0;
-            arrNextAngle.push(nextAngleItem);
-            angleRad = 0;
-            console.log('for angle angleRad = 0 angleRad=' + angleRad);
-        } else {
-            var flagThereIs = false;
-            for (i in arrNextAngle){
-                nextAngleItem = [];
-                nextAngleItem = arrNextAngle[i];
-                if (nextAngleItem[0] == propId){
-                    switch (i){
-                        case 0:
-                            nextAngleItem[1] = nextAngleItem[1] + singleRad;
-                            angleRad = nextAngleItem[1];
-                            arrNextAngle[i] = nextAngleItem;
-                            break;
-                        case 1:
-                            nextAngleItem[1] = nextAngleItem[1] + singleRad;
-                            angleRad = Math.PI + nextAngleItem[1];
-                            arrNextAngle[i] = nextAngleItem;
-                            break;
-                        case 2:
-                            nextAngleItem[1] = nextAngleItem[1] + singleRad;
-                            angleRad = (6/4)*Math.PI + nextAngleItem[1];
-                            arrNextAngle[i] = nextAngleItem;
-                            break;
-                    }
-                    flagThereIs = true;
-                    console.log('for angle  nextAngleItem[0] == propId  propId=' + propId + 'angleRad=' + angleRad);
-                }
-            }
-            if (flagThereIs == false){
-                nextAngleItem = [];
-                nextAngleItem[0] = propId;
-                nextAngleItem[1] = 0;
-                arrNextAngle.push(nextAngleItem);
-                var countAngleItem = arrNextAngle.length;
-                switch (countAngleItem-1){
-                    case 1:
-                        // nextAngleItem[1] = nextAngleItem[1] + singleRad;
-                        angleRad = Math.PI;
-                        arrNextAngle[countAngleItem-1] = nextAngleItem;
-                        console.log('for angle case:1 angleRad=' + angleRad);
-                        break;
-                    case 2:
-                        // nextAngleItem[1] = nextAngleItem[1] + singleRad;
-                        angleRad = (6/4)*Math.PI;
-                        arrNextAngle[countAngleItem-1] = nextAngleItem;
-                        console.log('for angle case:2 angleRad=' + angleRad);
-                        break;
-                }
-            }
-
-        }*/
-
     };
 
     var RotateLine = function () {

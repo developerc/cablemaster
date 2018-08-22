@@ -1,1 +1,5 @@
-Description of my project here
+Приложение CableMaster предназначено для учета имеющихся на предприятии связи сети оптоволоконных кабелей. На существующей карте населенного пункта www.openstreetmap.org мастер кабельного участка может прокладывать кабельные линии с учетом муфт и оптических волокон. Имеется возможность просматривать соединения в муфте, проводить трассировку отдельного волокна. Применение приложения повысит производительность труда мастера кабельного участка.
+Применяемые технологии: Java, JavaScript, Spring, Hibernate, OpenLayers.
+
+This Web application is for registration of optical cable network in the telecommunication enterprise. On the existing map of a city www.openstreetmap.org cable master of enterprise can draw cable lines with mufts and optical fibers. Master have possibility to view connections in the muft, make tracing for a particular fiber. Using the application will improve labor productivity for a master of cable group. Used technologies: Java, JavaScript, Spring, Hibernate, OpenLayers.
+ 
