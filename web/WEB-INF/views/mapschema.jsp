@@ -25,6 +25,7 @@
     var idPropertyName = '';
     var singleRad = Math.PI/90;
     var featurePropertyName = '';
+    var arrAngleRad = [];
     var arrNextAngle = [];
     var arrItemsPropertyId = [];
     var objNextAngle = {};
@@ -91,7 +92,7 @@
         ]
     };
 
-    var styleMuftaFunction = function () {
+    var styleMuftaFunction = function (angleTextRad) {
         return[
             new ol.style.Style({
                 fill: new ol.style.Fill({
@@ -119,8 +120,9 @@
                     stroke: new ol.style.Stroke({
                         color: '#fff', width: 2
                     }),
+                    // text: 'proba',
                     text: colorThread + ' ' + colorModule + ' ' + idPropertyName,
-                    rotation: -1*angleRad
+                    rotation: angleTextRad
                 })
             })
         ]
@@ -157,7 +159,7 @@
             vectorSource.clear();
             GetURLparameter();
         } else if (zoom < 22){
-            radiusDependZoom = 300;
+            radiusDependZoom = 3;
             vectorSource.clear();
             GetURLparameter();
             if($('#check1').prop('checked')) {
@@ -178,11 +180,13 @@
             success: function (result) {
                 var stringData = JSON.stringify(result);
                 arrData = JSON.parse(stringData);
+                arrAngleRad = [];
                 arrItemsPropertyId = [];
                 arrNextAngle = [];
                 objNextAngle = {};
                 HandleArrData();
                 ShowLines();
+                ShowInsideConnections();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error getting data for draw mufta')
@@ -225,35 +229,13 @@
                FindAngleRotate(arrData[i].label);
 
                RotateLine();
-            arrData[i].angleRad = angleRad;
+               arrAngleRad.push(angleRad);
+               console.log('arrAngleRad.push(angleRad)='+angleRad);
+            // arrAngleRad[i] = angleRad;
+            // arrData[i].angleRad = angleRad;
             arrCoordsFeature.push(arrSingleLine);
 
         }
-
-        /*for (i in arrData) {
-            if (arrData[i].colorThread == 'red') {
-                strokeColorM = '#ff0705';
-            } else if (arrData[i].colorThread == 'blue') {
-                strokeColorM = '#3428ff';
-            } else if (arrData[i].colorThread == 'green') {
-                strokeColorM = '#09ff25';
-            } else if (arrData[i].colorThread == 'yellow') {
-                strokeColorM = '#fff012';
-            } else {
-                strokeColorM = '#78ffff';
-            }
-            colorThread = arrData[i].id + ' ' + arrData[i].colorThread;
-            colorModule = arrData[i].reserved;
-            angleRad = arrData[i].angleRad;
-            idPropertyName = arrData[i].label;
-            var linestring_feature = new ol.Feature({
-                geometry: new ol.geom.LineString(
-                    arrCoordsFeature[i]
-                )
-            });
-            linestring_feature.setStyle(styleMuftaFunction());
-            vectorSource.addFeature(linestring_feature);
-        }*/
     };
 
     var ShowLines = function () {
@@ -271,14 +253,57 @@
             }
             colorThread = arrData[i].id + ' ' + arrData[i].colorThread;
             colorModule = arrData[i].reserved;
-            angleRad = arrData[i].angleRad;
+            // angleRad = arrData[i].angleRad;
+            console.log('arrAngleRad[i]='+arrAngleRad[i]);
             idPropertyName = arrData[i].label;
             var linestring_feature = new ol.Feature({
                 geometry: new ol.geom.LineString(
                     arrCoordsFeature[i]
                 )
             });
-            linestring_feature.setStyle(styleMuftaFunction());
+            // linestring_feature.setStyle(styleFunction());
+            var itemAngleRad = arrAngleRad[i];
+            if (itemAngleRad < Math.PI/2){
+                itemAngleRad = -1*itemAngleRad;
+            } else {
+                if (itemAngleRad < Math.PI*3/2){
+                    itemAngleRad = Math.PI - itemAngleRad;
+                } else {
+                    itemAngleRad = -1*itemAngleRad;
+                }
+            }
+            linestring_feature.setStyle(styleMuftaFunction(itemAngleRad));
+            vectorSource.addFeature(linestring_feature);
+        }
+    };
+
+    var ShowInsideConnections = function () {
+        console.log('ShowInsideConnections --------------------------------------');
+        var arrLineCoord = [];
+        var arrFirstPoints = [];
+        var firstPoint = [];
+        var secondPoint = [];
+        for (i in arrData) {
+            arrFirstPoints.push(arrData[i].id); //создали массив первых точек
+        }
+        console.log(arrFirstPoints);
+        for (i in arrData){
+            arrLineCoord = [];
+            firstPoint = [];
+            secondPoint = [];
+            firstPoint = arrCoordsFeature[i][0];
+            var idSecondPoint = arrData[i].connectedTo;
+            var indexSecondPoint = arrFirstPoints.indexOf(idSecondPoint);
+            secondPoint = arrCoordsFeature[indexSecondPoint][0];
+            arrLineCoord.push(firstPoint);
+            arrLineCoord.push(secondPoint);
+            console.log('i='+i+', firstPoint='+firstPoint+', idSecondPoint='+idSecondPoint+', indexSecondPoint='+indexSecondPoint+', secondPoint='+secondPoint+', arrLineCoord'+arrLineCoord)
+            var linestring_feature = new ol.Feature({
+                geometry: new ol.geom.LineString(
+                    arrLineCoord
+                )
+            });
+            // linestring_feature.setStyle(styleFunction());
             vectorSource.addFeature(linestring_feature);
         }
     };
