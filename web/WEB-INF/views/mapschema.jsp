@@ -336,10 +336,10 @@
 
         switch (indOf){
             case 0:
-                angleRad = singleRad * count[itemArrDataLabel];
+                angleRad = singleRad * count[itemArrDataLabel] + Math.PI;
                 break;
             case 1:
-                angleRad = singleRad * count[itemArrDataLabel] + Math.PI;
+                angleRad = singleRad * count[itemArrDataLabel];
                 break;
             case 2:
                 angleRad = singleRad * count[itemArrDataLabel] + (6/4)*Math.PI;
