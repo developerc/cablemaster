@@ -43,6 +43,10 @@
     <li>
         <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
     </li>
+        <li>
+            <a href="http://localhost:8080/help">help</a>
+        </li>
+
 </form>
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>

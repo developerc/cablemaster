@@ -29,4 +29,9 @@ public class AppController {
     public String mapschemaPage(){
         return "mapschema";
     }
+
+    @RequestMapping("/help")
+    public String helpPage(){
+        return "help";
+    }
 }
