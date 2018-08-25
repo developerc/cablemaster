@@ -454,7 +454,7 @@
             var fullParameter = sParameterName[1].split(';');
             var propid = fullParameter[0];
             colorThread = fullParameter[1];
-            colorModule = fullParameter[2];
+            colorModule = fullParameter[2] + ' ' + propid ;
             if (colorThread == 'red'){
                 strokeColor = '#ff0705';
             } else if (colorThread == 'blue'){
@@ -543,8 +543,8 @@
                             featurePropertyName = '';
                         }
                         point_feature.setStyle(styleFunction());*/
-                        colorThread = '';
-                        colorModule = '';
+                        /*colorThread = '';
+                        colorModule = '';*/
                         point_feature.setStyle(styleFunction());
                         vectorSource.addFeature(point_feature);
                         console.log('это Point');

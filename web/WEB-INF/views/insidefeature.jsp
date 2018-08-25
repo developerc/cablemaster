@@ -132,6 +132,8 @@
                     countHalfThreads++;
                 }
                 output+= '</' +'table>';
+                output+='<button type="button" onclick="MultipleDescription()">Размножить Description</button>';
+                output+='<button type="button" onclick="MultipleLabel()">Размножить Label</button>';
                 output+='<button type="button" onclick="UpdateConnInsideFeature(arrData)">Update table</button>';
                 $('#tableCable').html(output);
             },
@@ -140,6 +142,21 @@
             }
         });
     };
+
+    var MultipleDescription = function () {
+        console.log('idDescription0 value =' + $('#idDescription0').val());
+        for (i in arrData){
+            $('#idDescription' + i).val($('#idDescription0').val());
+        }
+    };
+
+    var MultipleLabel = function () {
+      console.log('idLabel0 value =' + $('#idLabel0').val());
+      for (i in arrData){
+          $('#idLabel' + i).val($('#idLabel0').val());
+      }
+    };
+
     var UpdateConnInsideFeature = function () {
         console.log('UpdateConnInsideFeature, '+'countHalfThreads='+countHalfThreads);
         console.log('arrData[0].id='+arrData[0].id+'connectedTo0='+$('#idConnectedTo0').val()+'arrData[0].propertyId='+arrData[0].propertyId+'ColorThread0='+$('#idColorThread0').val()+'Description0='+$('#idDescription0').val()+'Label0='+$('#idLabel0').val()+'Reserved0='+$('#idReserved0').val());
