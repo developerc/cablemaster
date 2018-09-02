@@ -13,7 +13,7 @@
     var arrData=[];
     var arrPropertyId = [];
     var countHalfThreads = 0;
-    var service = 'http://localhost:8080/';
+    var service = 'http://10.152.46.71:8080/';
     var DelCableFeatureByPropertyId = function () {
         console.log('DelCableFeatureByPropertyId');
         $.ajax({
