@@ -334,7 +334,7 @@
           }
       }
       console.log('spisokParams=' + spisokParams);
-        window.open('http://localhost:8080/maptrassa' + spisokParams, '_blank');
+        window.open('http://10.152.46.71:8080/maptrassa' + spisokParams, '_blank');
         // window.open('http://localhost:8080/maptrassa?param=0&param=1&param=3', '_blank');
 
     };
@@ -349,7 +349,7 @@
                 spisokParams+='&param=' + arrPropertyId[i];
             }
         }
-        window.open('http://localhost:8080/mapschema' + spisokParams, '_blank');
+        window.open('http://10.152.46.71:8080/mapschema' + spisokParams, '_blank');
     };
 </script>
 <div class="panel panel-default">
