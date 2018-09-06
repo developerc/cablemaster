@@ -38,20 +38,20 @@
 <form class="form-inline">
     <%--<button type="button" onclick="window.location = 'http://localhost:8080/insidefeature';">ConnInsideFeature</button>--%>
     <li>
-        <a href="http://10.152.46.71:8080/insidefeature">insidefeature</a>
+        <a href="http://localhost:8080/insidefeature">insidefeature</a>
     </li>
     <li>
-        <a href="http://10.152.46.71:8080/betweenfeature">betweenfeature</a>
+        <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
     </li>
         <li>
-            <a href="http://10.152.46.71:8080/help">help</a>
+            <a href="http://localhost:8080/help">help</a>
         </li>
 
 </form>
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script>
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var arrCoords = [];
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем

@@ -13,7 +13,7 @@
     var arrData=[];
     var arrPropertyId = [];
     var countHalfThreads = 0;
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var DelCableFeatureByPropertyId = function () {
         console.log('DelCableFeatureByPropertyId');
         $.ajax({
@@ -132,6 +132,10 @@
                     countHalfThreads++;
                 }
                 output+= '</' +'table>';
+                output+='<label>с ячейки:</label>';
+                output+='<input id="beginCell" value="0"/>';
+                output+='<label>по ячейку:</label>';
+                output+='<input id="endCell" value="1"/>';
                 output+='<button type="button" onclick="MultipleDescription()">Размножить Description</button>';
                 output+='<button type="button" onclick="MultipleLabel()">Размножить Label</button>';
                 output+='<button type="button" onclick="UpdateConnInsideFeature(arrData)">Update table</button>';
@@ -145,15 +149,25 @@
 
     var MultipleDescription = function () {
         console.log('idDescription0 value =' + $('#idDescription0').val());
+        var cellVal = $('#idDescription' + $('#beginCell').val()).val();
         for (i in arrData){
-            $('#idDescription' + i).val($('#idDescription0').val());
+            if(i >= $('#beginCell').val()) {
+                if (i <= $('#endCell').val()) {
+                    $('#idDescription' + i).val(cellVal);
+                }
+            }
         }
     };
 
     var MultipleLabel = function () {
       console.log('idLabel0 value =' + $('#idLabel0').val());
+        var cellVal = $('#idLabel' + $('#beginCell').val()).val();
       for (i in arrData){
-          $('#idLabel' + i).val($('#idLabel0').val());
+          if(i >= $('#beginCell').val()) {
+              if (i <= $('#endCell').val()) {
+          $('#idLabel' + i).val(cellVal);
+              }
+          }
       }
     };
 
@@ -334,7 +348,7 @@
           }
       }
       console.log('spisokParams=' + spisokParams);
-        window.open('http://10.152.46.71:8080/maptrassa' + spisokParams, '_blank');
+        window.open('http://localhost:8080/maptrassa' + spisokParams, '_blank');
         // window.open('http://localhost:8080/maptrassa?param=0&param=1&param=3', '_blank');
 
     };
@@ -349,7 +363,7 @@
                 spisokParams+='&param=' + arrPropertyId[i];
             }
         }
-        window.open('http://10.152.46.71:8080/mapschema' + spisokParams, '_blank');
+        window.open('http://localhost:8080/mapschema' + spisokParams, '_blank');
     };
 </script>
 <div class="panel panel-default">
