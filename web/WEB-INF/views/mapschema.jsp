@@ -414,13 +414,13 @@
                 angleRad = -1 * singleRad * count[itemArrDataLabel] + (1/4)*Math.PI;
                 break;
             case 5:
-                angleRad = -1 * singleRad * count[itemArrDataLabel] + (5/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (7/4)*Math.PI;
                 break;
             case 6:
                 angleRad = -1 * singleRad * count[itemArrDataLabel] + (3/4)*Math.PI;
                 break;
             case 7:
-                angleRad = -1 * singleRad * count[itemArrDataLabel] + (7/4)*Math.PI;
+                angleRad = -1 * singleRad * count[itemArrDataLabel] + (5/4)*Math.PI;
                 break;
         }
     };
