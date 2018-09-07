@@ -280,27 +280,27 @@
             } else if (arrData[i].colorThread == 'blue') {
                 strokeColorM = '#3428ff';
             } else if (arrData[i].colorThread == 'green') {
-                strokeColorM = '#09ff25';
+                strokeColorM = '#10a83b';
             } else if (arrData[i].colorThread == 'yellow') {
-                strokeColorM = '#fff012';
+                strokeColorM = '#f7f75f';
             } else if (arrData[i].colorThread == 'purple') {
                 strokeColorM = '#c91697';
             } else if (arrData[i].colorThread == 'brown') {
-                strokeColorM = '#cc4e0a';
+                strokeColorM = '#b26010';
             } else if (arrData[i].colorThread == 'gray') {
                 strokeColorM = '#636363';
             } else if (arrData[i].colorThread == 'white') {
-                strokeColorM = '#d7d7d7';
+                strokeColorM = '#fcfcfc';
             } else if (arrData[i].colorThread == 'orange') {
-                strokeColorM = '#d9970c';
+                strokeColorM = '#ffa500';
             } else if (arrData[i].colorThread == 'pink') {
-                strokeColorM = '#dc586c';
+                strokeColorM = '#f995a6';
             } else if (arrData[i].colorThread == 'lightgreen') {
                 strokeColorM = '#a1ff1b';
             } else if (arrData[i].colorThread == 'hardyellow') {
-                strokeColorM = '#cdc80d';
+                strokeColorM = '#f9dc1f';
             } else if (arrData[i].colorThread == 'lightbrown') {
-                strokeColorM = '#ff9454';
+                strokeColorM = '#f7bc82';
             } else {
                 strokeColorM = '#78ffff';
             }

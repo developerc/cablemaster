@@ -148,36 +148,44 @@
     };
 
     var MultipleDescription = function () {
-        console.log('idDescription0 value =' + $('#idDescription0').val());
-        var cellVal = $('#idDescription' + 0).val();
-        // var cellVal = $('#idDescription' + $('#beginCell').val()).val();
-        // var begCelVal = 0;
-        //  begCelVal = $('#beginCell').val();
-        // var cellVal = $('#idDescription' + begCelVal).val();
-        // var endCelVal = 0;
-        //  endCelVal = $('#endCell').val();
-        //  var iter = 0;
-         /*var i;
-         for (i = 0; i < 5; i++){
-             begCelVal = begCelVal + i;
-             $('#idDescription' + begCelVal).val(cellVal);
-         }*/
-        for (i in arrData){
-            // iter = i;
-            // if(iter > begCelVal) {
-                //if (i <= endCelVal) {
-            $('#idDescription' + i).val(cellVal);
-                    // console.log('i=' + iter +', beginCell=' + begCelVal + ', #idDescriptioni=' + '#idDescription' + iter);
-                // if (i == endCelVal){
-                //     break;
-                // }
-                // }
-            // }
+        var begCelVal = 0;
+         begCelVal = $('#beginCell').val();
+        var endCelVal = 0;
+         endCelVal = $('#endCell').val();
+        var cellVal = $('#idDescription' + begCelVal).val();
+        console.log('begCelVal=' + begCelVal + ', endCelVal=' + endCelVal + ', cellVal=' + cellVal);
+
+        var i = 0;
+        for (i = 0; i < arrData.length; i++){
+            if(i >= begCelVal) {
+                if (i <= endCelVal) {
+                    $('#idDescription' + i).val(cellVal);
+                }
+            }
+            console.log('#idDescription' + i + '=' + cellVal);
         }
     };
 
     var MultipleLabel = function () {
-      console.log('idLabel0 value =' + $('#idLabel0').val());
+        var begCelVal = 0;
+        begCelVal = $('#beginCell').val();
+        var endCelVal = 0;
+        endCelVal = $('#endCell').val();
+        var cellVal = $('#idLabel' + begCelVal).val();
+        console.log('begCelVal=' + begCelVal + ', endCelVal=' + endCelVal + ', cellVal=' + cellVal);
+
+        var i = 0;
+        for (i = 0; i < arrData.length; i++){
+            if(i >= begCelVal) {
+                if (i <= endCelVal) {
+                    $('#idLabel' + i).val(cellVal);
+                }
+            }
+            console.log('#idLabel' + i + '=' + cellVal);
+        }
+
+
+      /*console.log('idLabel0 value =' + $('#idLabel0').val());
         var cellVal = $('#idLabel' + 0).val();
         // var cellVal = $('#idLabel' + $('#beginCell').val()).val();
       for (i in arrData){
@@ -186,7 +194,7 @@
           $('#idLabel' + i).val(cellVal);
           //     }
           // }
-      }
+      }*/
     };
 
     var UpdateConnInsideFeature = function () {
