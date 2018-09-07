@@ -149,25 +149,43 @@
 
     var MultipleDescription = function () {
         console.log('idDescription0 value =' + $('#idDescription0').val());
-        var cellVal = $('#idDescription' + $('#beginCell').val()).val();
+        var cellVal = $('#idDescription' + 0).val();
+        // var cellVal = $('#idDescription' + $('#beginCell').val()).val();
+        // var begCelVal = 0;
+        //  begCelVal = $('#beginCell').val();
+        // var cellVal = $('#idDescription' + begCelVal).val();
+        // var endCelVal = 0;
+        //  endCelVal = $('#endCell').val();
+        //  var iter = 0;
+         /*var i;
+         for (i = 0; i < 5; i++){
+             begCelVal = begCelVal + i;
+             $('#idDescription' + begCelVal).val(cellVal);
+         }*/
         for (i in arrData){
-            if(i >= $('#beginCell').val()) {
-                if (i <= $('#endCell').val()) {
-                    $('#idDescription' + i).val(cellVal);
-                }
-            }
+            // iter = i;
+            // if(iter > begCelVal) {
+                //if (i <= endCelVal) {
+            $('#idDescription' + i).val(cellVal);
+                    // console.log('i=' + iter +', beginCell=' + begCelVal + ', #idDescriptioni=' + '#idDescription' + iter);
+                // if (i == endCelVal){
+                //     break;
+                // }
+                // }
+            // }
         }
     };
 
     var MultipleLabel = function () {
       console.log('idLabel0 value =' + $('#idLabel0').val());
-        var cellVal = $('#idLabel' + $('#beginCell').val()).val();
+        var cellVal = $('#idLabel' + 0).val();
+        // var cellVal = $('#idLabel' + $('#beginCell').val()).val();
       for (i in arrData){
-          if(i >= $('#beginCell').val()) {
-              if (i <= $('#endCell').val()) {
+          // if(i >= $('#beginCell').val()) {
+          //     if (i <= $('#endCell').val()) {
           $('#idLabel' + i).val(cellVal);
-              }
-          }
+          //     }
+          // }
       }
     };
 

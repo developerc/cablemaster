@@ -15,3 +15,19 @@ colorThread - цвет полуволокна (red) подсоединенног
 description - описываем feature (mufta)
 label - propertyId кабеля, feature, который подсоединен к муфте
 reserved - цвет модуля (red_module) подсоединенного кабеля
+
+Цвета:
+красный - red - '#ff0705'
+синий - blue - '#3428ff'
+зеленый - green - '#09ff25'
+желтый - yellow - '#fff012'
+фиолетовый - purple - '#c91697'
+коричневый - brown - '#cc4e0a'
+серый - gray - '#636363'
+белый - white - '#d7d7d7'
+оранжевый - orange - '#d9970c'
+розовый - pink - '#dc586c'
+салатовый - lightgreen - '#a1ff1b'
+темножелтый - hardyellow - '#cdc80d'
+телесный - lightbrown - '#ff9454'
+неизвестный - светло_синий -'#78ffff'

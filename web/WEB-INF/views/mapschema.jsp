@@ -283,9 +283,28 @@
                 strokeColorM = '#09ff25';
             } else if (arrData[i].colorThread == 'yellow') {
                 strokeColorM = '#fff012';
+            } else if (arrData[i].colorThread == 'purple') {
+                strokeColorM = '#c91697';
+            } else if (arrData[i].colorThread == 'brown') {
+                strokeColorM = '#cc4e0a';
+            } else if (arrData[i].colorThread == 'gray') {
+                strokeColorM = '#636363';
+            } else if (arrData[i].colorThread == 'white') {
+                strokeColorM = '#d7d7d7';
+            } else if (arrData[i].colorThread == 'orange') {
+                strokeColorM = '#d9970c';
+            } else if (arrData[i].colorThread == 'pink') {
+                strokeColorM = '#dc586c';
+            } else if (arrData[i].colorThread == 'lightgreen') {
+                strokeColorM = '#a1ff1b';
+            } else if (arrData[i].colorThread == 'hardyellow') {
+                strokeColorM = '#cdc80d';
+            } else if (arrData[i].colorThread == 'lightbrown') {
+                strokeColorM = '#ff9454';
             } else {
                 strokeColorM = '#78ffff';
             }
+
             colorThread = arrData[i].id + ' ' + arrData[i].colorThread;
             colorModule = arrData[i].reserved;
             // angleRad = arrData[i].angleRad;
