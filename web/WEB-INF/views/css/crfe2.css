@@ -1,0 +1,101 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 2px;
+    border: black;
+    border-width: 2px;
+    padding-bottom: 2px;
+    /*position: absolute;*/
+}
+
+
+
+.wrapper{
+    width: 1200px;
+    /*height: 100%;*/
+    /*background-color: #33C3F0;*/
+    background-color: white;
+    margin: 10px auto;
+    justify-content: center;
+}
+
+.left{
+    width: 400px;
+    float: left;
+    /*background:grey;*/
+    background:white;
+
+}
+.right{
+    width: 400px;
+    float: right;
+    /*background:red;*/
+    background:white;
+    padding-top: 5px;
+}
+.center{
+    width: 400px;
+    /*background:green;*/
+    margin:0 auto;
+    display:inline-block;
+}
+.main{
+    overflow: hidden;
+}
+.main-left{
+    overflow: hidden;
+    float: left;
+    background: green;
+}
+
+.hover { background-color:yellow; }
+
+
+#cssmenu {
+    background: white;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 16em;
+
+    overflow: hidden;
+    float: left;
+}
+#cssmenu li {
+    font: 80% "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+#cssmenu a {
+    background: #fafad2;
+    border-bottom: 1px solid #f08c1c;
+    color: black;
+    display: block;
+    margin: 0;
+    padding: 8px 8px;
+    text-decoration: none;
+    font-weight: normal;
+}
+#cssmenu a:hover {
+    background: #2580a2 url("../images/hover.gif") left center no-repeat;
+    color: #fff;
+    padding-bottom: 8px;
+}
+
+
+/*input, select, select option{background-color:#6ac17a !important}*/
+/*select option{
+    background: #6ac17a;
+    color:#fff;
+}*/
+/*.container {
+    display: flex;
+    justify-content: center;
+}
+.center {
+    width: 800px;
+    background: #5F85DB;
+    color: #fff;
+    font-weight: bold;
+    font-family: Tahoma;
+}*/

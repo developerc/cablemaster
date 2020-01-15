@@ -30,6 +30,11 @@ public class AppController {
         return "mapschema";
     }
 
+    @RequestMapping("/createfeature")
+    public String createfeaturePage(){
+        return "createfeature";
+    }
+
     @RequestMapping("/help")
     public String helpPage(){
         return "help";

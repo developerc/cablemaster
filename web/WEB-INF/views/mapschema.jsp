@@ -174,6 +174,7 @@
     });
 
     map.on("moveend", function () {
+    // map.on("mouse-wheel", function () {
         var zoom = map.getView().getZoom();
         console.log('zoom='+zoom);
         if (zoom < 18) {
@@ -341,35 +342,39 @@
             arrFirstPoints.push(arrData[i].id); //создали массив первых точек
         }
         console.log(arrFirstPoints);
-        for (i in arrData){
+        // for (i in arrData){
+        var i = 0;
+        for (i = 0; i < arrData.length; i++){
             arrLineCoord = [];
             firstPoint = [];
             secondPoint = [];
             firstPoint = arrCoordsFeature[i][0];
             var idSecondPoint = arrData[i].connectedTo;
-            var indexSecondPoint = arrFirstPoints.indexOf(idSecondPoint);
-            secondPoint = arrCoordsFeature[indexSecondPoint][0];
-            arrLineCoord.push(firstPoint);
-            arrLineCoord.push(secondPoint);
-            console.log('i='+i+', firstPoint='+firstPoint+', idSecondPoint='+idSecondPoint+', indexSecondPoint='+indexSecondPoint+', secondPoint='+secondPoint+', arrLineCoord'+arrLineCoord)
-            var linestring_feature = new ol.Feature({
-                geometry: new ol.geom.LineString(
-                    arrLineCoord
-                )
-            });
-            switch (colorInside){
-                case '#000000':
-                    colorInside = '#606060';
-                    break;
-                case '#606060':
-                    colorInside = '#969696';
-                    break;
-                case '#969696':
-                    colorInside = '#000000';
-                    break;
+            if (idSecondPoint > 0) {  //если ConnectedTo не нуль, рисуем линию, иначе зависнет
+                var indexSecondPoint = arrFirstPoints.indexOf(idSecondPoint);
+                secondPoint = arrCoordsFeature[indexSecondPoint][0];
+                arrLineCoord.push(firstPoint);
+                arrLineCoord.push(secondPoint);
+                console.log('i=' + i + ', firstPoint=' + firstPoint + ', idSecondPoint=' + idSecondPoint + ', indexSecondPoint=' + indexSecondPoint + ', secondPoint=' + secondPoint + ', arrLineCoord' + arrLineCoord)
+                var linestring_feature = new ol.Feature({
+                    geometry: new ol.geom.LineString(
+                        arrLineCoord
+                    )
+                });
+                switch (colorInside) {
+                    case '#000000':
+                        colorInside = '#606060';
+                        break;
+                    case '#606060':
+                        colorInside = '#969696';
+                        break;
+                    case '#969696':
+                        colorInside = '#000000';
+                        break;
+                }
+                linestring_feature.setStyle(styleInsideFunction());
+                vectorSource.addFeature(linestring_feature);
             }
-            linestring_feature.setStyle(styleInsideFunction());
-            vectorSource.addFeature(linestring_feature);
         }
     };
 

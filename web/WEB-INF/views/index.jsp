@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>Create new content</title>
-    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+     <link href="css/styles.css" rel="stylesheet">
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <%--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>--%>
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <%--<script src="js/ol.js"></script>--%>
+    <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
 <div id="map" class="map">
@@ -13,6 +15,11 @@
 </div>
 <form class="form-inline">
     <%--<label>Geometry type &nbsp;</label>--%>
+        <select name="" id="actionType">
+            <option value="addLine">Добавить линию</option>
+            <option value="editLine">Редактировать линию</option>
+            <option value="propertyLine">Свойства линии</option>
+        </select>
     <select id="type">
         <option value="LineString">LineString</option>
         <option value="Point">Point</option>
@@ -38,20 +45,20 @@
 <form class="form-inline">
     <%--<button type="button" onclick="window.location = 'http://localhost:8080/insidefeature';">ConnInsideFeature</button>--%>
     <li>
-        <a href="http://localhost:8080/insidefeature">insidefeature</a>
+        <a href="http://10.152.46.71:8080/insidefeature">insidefeature</a>
     </li>
     <li>
-        <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
+        <a href="http://10.152.46.71:8080/betweenfeature">betweenfeature</a>
     </li>
         <li>
-            <a href="http://localhost:8080/help">help</a>
+            <a href="http://10.152.46.71:8080/help">help</a>
         </li>
 
 </form>
 
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
 <script>
-    var service = 'http://localhost:8080/';
+    var service = 'http://10.152.46.71:8080/';
     var arrCoords = [];
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
@@ -126,7 +133,17 @@
         })
     });
     var modify = new ol.interaction.Modify({source: source});
-    map.addInteraction(modify);
+    //-------------------------
+    /*var select = new ol.interaction.Select();
+    map.addInteraction(select);
+    select.on('select', function(e) {
+        //console.log("feature selected!");
+        // console.log(e.selected[0].getProperties().name);
+        console.log(e.selected[0].get('name'));
+        //console.log(evt.feature.getProperties());
+    });*/
+    //-------------------------
+   map.addInteraction(modify);
     var typeSelect = document.getElementById('type');
     var draw; // global so we can remove it later
     function addInteraction() {
@@ -183,9 +200,36 @@
     }
     typeSelect.onchange = function(e) {
         map.removeInteraction(draw);
-        addInteraction();
+       addInteraction();
     };
-    addInteraction();
+
+    $('#actionType').on('change', function() { //выбираем вид действия с картой
+        // alert( this.value );
+        var selectSingleClick;
+        if (this.value == 'propertyLine') {
+            // select interaction working on "singleclick"
+            selectSingleClick = new ol.interaction.Select();
+            map.removeInteraction(draw);
+            map.removeInteraction(modify);
+            map.addInteraction(selectSingleClick);
+            selectSingleClick.on('select', function (e) {
+                console.log(e.selected[0].get('name'));
+                var spisokParams = '?' + e.selected[0].get('name');
+        //при клике на линии открываем новое окно для добавления и редактирования соединений
+                window.open(service + 'createfeature' + spisokParams, '_blank');
+            });
+        }
+        if(this.value == 'addLine'){
+            map.removeInteraction(selectSingleClick);
+            addInteraction();
+        }
+        if(this.value == 'editLine'){
+            map.removeInteraction(draw);
+            map.removeInteraction(selectSingleClick);
+            map.addInteraction(modify);
+        }
+    });
+   addInteraction();
 
     var saveDrawCoordsPoint = function (arrCoords, nextid) {
         //формируем JSON точки для отправки на сервер
@@ -347,7 +391,7 @@
         var idFeatureCoord;
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8080/featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
+            url: 'http://10.152.46.71:8080/featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -370,7 +414,7 @@
     var DelFeatureCoordById = function (idFeatureCoord) {
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8080/featurecoord/delete?id=' + idFeatureCoord,
+            url: 'http://10.152.46.71:8080/featurecoord/delete?id=' + idFeatureCoord,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -386,7 +430,7 @@
     var AddModifiedFeature = function (JSONmodifyCoord) {
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8080/featurecoord/add',
+            url: 'http://10.152.46.71:8080/featurecoord/add',
             contentType: 'application/json;charset=utf-8',
             data: JSON.stringify(JSONmodifyCoord),
             dataType: 'json',
@@ -441,7 +485,8 @@
                         var linestring_feature = new ol.Feature({
                             geometry: new ol.geom.LineString(
                                 arrLineCoord
-                            )
+                            ),
+                            name: objFeature.id  //при отрисовке присвоим свойство 'name'  равным id, что бы при select-e можно было сформировать таблицу
                         });
 
                         if($('#check1').prop('checked')) {
@@ -458,7 +503,8 @@
                         var point_feature = new ol.Feature({
                             geometry: new ol.geom.Point(
                                 arrPointCoord
-                            )
+                            ),
+                            name: objFeature.id  //при отрисовке присвоим свойство 'name'  равным id, что бы при select-e можно было сформировать таблицу
                         });
                         if($('#check1').prop('checked')) {
                             featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
@@ -715,7 +761,9 @@
             }
         });
     };
-</script>
 
+
+</script>
+<%--<script src="js/main.js"></script>--%>
 </body>
 </html>
