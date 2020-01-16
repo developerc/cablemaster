@@ -173,6 +173,12 @@
                 var nametable;
                 var colArr = [];
                 var rowArr = [];
+                curTableNum = 0;
+                $('table').each(function () {
+                    console.log($(this).attr("id"));
+                    curTableNum++;
+                });
+               // numTable++;  //номер таблицы - следующий
                 curTableNum++;  //перед созданием новой таблицы увеличим номер
                 lrSelect = $('#leftRight').val();
                 // $("#mytext").html(lrSelect);
@@ -658,7 +664,117 @@
             var sPageURL = decodeURIComponent(window.location.search.substring(1));
             delFeatureByPropertyId(sPageURL);
         });
+        //подключаем таблицу
+        $('#connTable').click(function () {
+            // console.log('подключаем таблицу');
+            var sPageURL = decodeURIComponent(window.location.search.substring(1));
+            addConnBetweenFeature(sPageURL);
+        });
     });
+
+    function addConnBetweenFeature(propertyId) {
+        // console.log(propertyId + ';' + $('#column5').val());
+        var arrLTable = [];
+        var arrRTable = [];
+        var arrLRSide = []
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/propertyid/' + $('#column5').val(),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                // console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                var arrId = [];
+                console.log('количество записей=' + arrData.length);
+
+                for (var i in arrData){
+                    if (arrData[i].description.startsWith('l')) {
+                        arrRow = [];
+                        arrRow.push(arrData[i].id);
+                        arrRow.push(arrData[i].colorThread);
+                        arrRow.push(arrData[i].connectedTo);
+                        arrRow.push(arrData[i].description);
+                        arrRow.push(arrData[i].label);
+                        arrRow.push(arrData[i].propertyId);
+                        arrRow.push(arrData[i].reserved);
+                        arrLTable.push(arrRow);
+                    } else {
+                        arrRow = [];
+                        arrRow.push(arrData[i].id);
+                        arrRow.push(arrData[i].colorThread);
+                        arrRow.push(arrData[i].connectedTo);
+                        arrRow.push(arrData[i].description);
+                        arrRow.push(arrData[i].label);
+                        arrRow.push(arrData[i].propertyId);
+                        arrRow.push(arrData[i].reserved);
+                        arrRTable.push(arrRow);
+                    }
+                    // arrId.push(arrData[i].id);
+                }
+                console.log(arrLTable);
+                console.log(arrRTable);
+                //надо проверять подключена сторона кабеля к другой муфте
+                console.log('количество подключений=' + countBetweenConnections(arrLTable));
+
+                //сейчас будем подсоединять первую сторону кабеля и визуализировать
+                var numTable = 0;
+                $('table').each(function () {
+                    console.log($(this).attr("id"));
+                    numTable++;
+                });
+                numTable++;  //номер таблицы - следующий
+                console.log('numTable=' + numTable);
+                lrSelect = $('#leftRight').val();
+                //arrLRSide = arrLTable;  // если левая сторона не подключена
+                var arrTh;
+                var nameTable;
+                if (lrSelect == 'слева') {
+                    arrLRSide = arrLTable;
+                    arrTh = arrLRSide[1][6].split(';');
+                    nameTable = 'ltable' + numTable;
+                    $('#divleft').append('<div class="table-wrapper">');
+                    $('#divleft').append('<table border="2" bgcolor="#fafad2" id="ltable' + numTable + '" align="right"><tr><td colspan="4">' + arrLRSide[0][6] + '</td></tr><tr><th>' + arrTh[0] + '</th><th>' + arrTh[1] + '</th><th>' + arrTh[2] + '</th><th>' + arrTh[3] + '</th></tr></table>');
+                    $('#divleft').append('</div>');
+
+                    for (var i = 2; i < arrLRSide.length; i++) {
+                        var strTableTd = arrLRSide[i][6].split(';');
+                        // console.log(strTableTd);
+                        var idTable = "#" + nameTable;
+                        $(idTable).append('<tr><td>' + strTableTd[0] + '</td><td>' + strTableTd[1] + '</td><td>' + strTableTd[2] + '</td><td>' + strTableTd[3] + '</td></tr>');
+                    }
+                } else {
+                    arrLRSide = arrRTable;
+                    arrTh = arrLRSide[1][6].split(';');
+                    nameTable = 'rtable' + numTable;
+                    $('#divright').append('<div class="table-wrapper">');
+                    $('#divright').append('<table border="2" bgcolor="#fafad2" id="rtable' + numTable + '" align="left"><tr><td colspan="4">' + arrLRSide[0][6] + '</td></tr><tr><th>' + arrTh[0] + '</th><th>' + arrTh[1] + '</th><th>' + arrTh[2] + '</th><th>' + arrTh[3] + '</th></tr></table>');
+                    $('#divright').append('</div>');
+
+                    for (var i = 2; i < arrLRSide.length; i++) {
+                        var strTableTd = arrLRSide[i][6].split(';');
+                        // console.log(strTableTd);
+                        var idTable = "#" + nameTable;
+                        $(idTable).append('<tr><td>' + strTableTd[0] + '</td><td>' + strTableTd[1] + '</td><td>' + strTableTd[2] + '</td><td>' + strTableTd[3] + '</td></tr>');
+                    }
+                }
+                $('table').each(function () {
+                    console.log($(this).attr("id"));
+                    var idAddTable = '#' + $(this).attr("id");
+                    var bottomTableLeft = $(idAddTable).position().top + $(idAddTable).height();
+                    var bottomMap = $('#map').position().top + $('#map').height();
+                    if (bottomMap < bottomTableLeft) {
+                        var heightMap = bottomTableLeft - $(".center").position().top;
+                        $('#map').css("height", heightMap);
+                    }
+                });
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord by propertyId')
+            }
+        });
+    }
 
     function updateConnInsideFeature() {
         //делаем update соединениям в таблице ConnInsideFeature
@@ -969,6 +1085,31 @@
         tables[nametable].push(colArr);
     }
 
+    function countBetweenConnections(arrTable) {
+        console.log('countBetweenConnections: ищем количество подключений');
+        // console.log(arrTable);
+        var countConnections = 0;
+        for (var i in arrTable) {
+            $.ajax({
+                type: 'GET',
+                url: service + 'connbetweenfeature/getconnbetweenbyid/' + arrTable[i][0],
+                dataType: 'json',
+                async: false,
+                success: function (result) {
+                    var stringData = JSON.stringify(result);
+                    arrData = JSON.parse(stringData);
+                    countConnections = countConnections + arrData.length;
+                },
+                error: function (jqXHR, testStatus, errorThrown) {
+                    // $('#tableCable').html(JSON.stringify(jqXHR))
+                    console.log(JSON.stringify(jqXHR));
+                }
+            });
+        }
+
+        return countConnections;
+    }
+
     /*var GetURLparameter = function () {
         var sPageURL = decodeURIComponent(window.location.search.substring(1));
         console.log('GetURLparameter:' + sPageURL);
@@ -1013,6 +1154,7 @@
         <ul>
             <li class='active' id="btnAddTable"><a href='#'><span>Добавить таблицу</span></a></li>
             <li id="btnAppend"><a href='#'><span>Увеличить таблицу</span></a></li>
+            <li id="connTable"><a href='#'><span>Подключить таблицу</span></a></li>
             <li id="btn1"><a href='#'><span>Добавить соединение</span></a></li>
             <li id="breakConn"><a href='#'><span>Разорвать соединение</span></a></li>
             <li id="makeCable"><a href='#'><span>Создать кабель</span></a></li>
