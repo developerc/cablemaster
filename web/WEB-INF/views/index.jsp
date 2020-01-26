@@ -58,7 +58,7 @@
 
 
 <script>
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var arrCoords = [];
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
@@ -391,7 +391,7 @@
         var idFeatureCoord;
         $.ajax({
             type: 'GET',
-            url: 'http://10.152.46.71:8080/featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
+            url: service + 'featurecoord/get/propertyid/' + JSONmodifyCoord.propertyId,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -414,7 +414,7 @@
     var DelFeatureCoordById = function (idFeatureCoord) {
         $.ajax({
             type: 'DELETE',
-            url: 'http://10.152.46.71:8080/featurecoord/delete?id=' + idFeatureCoord,
+            url: service + 'featurecoord/delete?id=' + idFeatureCoord,
             dataType: 'json',
             async: false,
             success: function (result) {
@@ -430,7 +430,7 @@
     var AddModifiedFeature = function (JSONmodifyCoord) {
         $.ajax({
             type: 'POST',
-            url: 'http://10.152.46.71:8080/featurecoord/add',
+            url: 'http://localhost:8080/featurecoord/add',
             contentType: 'application/json;charset=utf-8',
             data: JSON.stringify(JSONmodifyCoord),
             dataType: 'json',

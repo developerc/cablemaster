@@ -87,7 +87,7 @@
 </head>
 <body>
 <script>
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var tables ={};  //объявляем объект таблицы
     var connTabs=[]; //обьявляем массив соединений
     var connTabsMarked; //отмеченная строка массива соединений
@@ -1183,9 +1183,17 @@
                         for (var n in tableInArrInsideFeature){
                             var strInArrInsideFeature = tableInArrInsideFeature[n];
                             var labelInStr = strInArrInsideFeature[4];
+                            var descrInStr = strInArrInsideFeature[3];
                             var arrlabel = labelInStr.split(';');
+                            var arrdescr = descrInStr.split(';');
                             if (arrlabel.length > 1) {
                                 console.log(strInArrInsideFeature);
+                                for (var k in arrConnInsideFeature){
+                                    arrDesPageTable = (arrConnInsideFeature[k][3]).split(';');
+                                    if ((arrDesPageTable[0] == arrlabel[1]) && (arrDesPageTable[1] == arrdescr[1])){
+                                        console.log('arrConnInsideFeature[k][0]=' + arrConnInsideFeature[k][0] + ', ' + 'strInArrInsideFeature[0]=' + strInArrInsideFeature[0]);
+                                    }
+                                }
                             }
                         }
                     }
