@@ -102,6 +102,7 @@
     var arrTabs = [];
     var arrConnInsideFeature = []; //массив строк таблиц соединений
     var arrString = []; //Массив строки полей. В нем 0-id, 1-colorThread, 2-connectedTo, 3-description, 4-label, 5-propertyId, 6-reserved
+    var arrAddInsideFeature = [];  //массив присоединенных таблиц
 
     $(document).ready(function(){
         idClickedTable1 = 'null';
@@ -508,7 +509,7 @@
 
 
             });
-            console.log(arrConnInsideFeature);
+            console.log('arrConnInsideFeature=' + arrConnInsideFeature);
             //сохраняем соединения между строками
             var firstConn = [];
             var secondConn = [];
@@ -573,7 +574,11 @@
             for (var i in colorConn){
                 console.log(colorConn[i]);
             }
-            console.log(arrConnInsideFeature);
+            // console.log(arrConnInsideFeature);
+
+            //если это муфта будем сохранять внешние соединения
+            saveBetweenConnIfPoint(propertyId);
+
         });
         //делаем кабель
         $('#makeCable').click(function () {
@@ -674,9 +679,10 @@
 
     function addConnBetweenFeature(propertyId) {
         // console.log(propertyId + ';' + $('#column5').val());
+        var sPageURL = decodeURIComponent(window.location.search.substring(1));
         var arrLTable = [];
         var arrRTable = [];
-        var arrLRSide = []
+        var arrLRSide = [];
         $.ajax({
             type: 'GET',
             url: service + 'conninsidefeature/get/propertyid/' + $('#column5').val(),
@@ -696,7 +702,8 @@
                         arrRow.push(arrData[i].colorThread);
                         arrRow.push(arrData[i].connectedTo);
                         arrRow.push(arrData[i].description);
-                        arrRow.push(arrData[i].label);
+                        // arrRow.push(arrData[i].label);
+                        arrRow.push(sPageURL);
                         arrRow.push(arrData[i].propertyId);
                         arrRow.push(arrData[i].reserved);
                         arrLTable.push(arrRow);
@@ -706,69 +713,108 @@
                         arrRow.push(arrData[i].colorThread);
                         arrRow.push(arrData[i].connectedTo);
                         arrRow.push(arrData[i].description);
-                        arrRow.push(arrData[i].label);
+                        // arrRow.push(arrData[i].label);
+                        arrRow.push(sPageURL);
                         arrRow.push(arrData[i].propertyId);
                         arrRow.push(arrData[i].reserved);
                         arrRTable.push(arrRow);
                     }
                     // arrId.push(arrData[i].id);
                 }
-                console.log(arrLTable);
-                console.log(arrRTable);
+                // console.log(arrLTable);
+                // console.log(arrRTable);
                 //надо проверять подключена сторона кабеля к другой муфте
-                console.log('количество подключений=' + countBetweenConnections(arrLTable));
-
-                //сейчас будем подсоединять первую сторону кабеля и визуализировать
-                var numTable = 0;
-                $('table').each(function () {
-                    console.log($(this).attr("id"));
-                    numTable++;
-                });
-                numTable++;  //номер таблицы - следующий
-                console.log('numTable=' + numTable);
-                lrSelect = $('#leftRight').val();
-                //arrLRSide = arrLTable;  // если левая сторона не подключена
-                var arrTh;
-                var nameTable;
-                if (lrSelect == 'слева') {
-                    arrLRSide = arrLTable;
-                    arrTh = arrLRSide[1][6].split(';');
-                    nameTable = 'ltable' + numTable;
-                    $('#divleft').append('<div class="table-wrapper">');
-                    $('#divleft').append('<table border="2" bgcolor="#fafad2" id="ltable' + numTable + '" align="right"><tr><td colspan="4">' + arrLRSide[0][6] + '</td></tr><tr><th>' + arrTh[0] + '</th><th>' + arrTh[1] + '</th><th>' + arrTh[2] + '</th><th>' + arrTh[3] + '</th></tr></table>');
-                    $('#divleft').append('</div>');
-
-                    for (var i = 2; i < arrLRSide.length; i++) {
-                        var strTableTd = arrLRSide[i][6].split(';');
-                        // console.log(strTableTd);
-                        var idTable = "#" + nameTable;
-                        $(idTable).append('<tr><td>' + strTableTd[0] + '</td><td>' + strTableTd[1] + '</td><td>' + strTableTd[2] + '</td><td>' + strTableTd[3] + '</td></tr>');
-                    }
+                // console.log('количество подключений=' + countBetweenConnections(arrLTable));
+                var flagLRTable = 'null';
+                if (countBetweenConnections(arrLTable) == 0){
+                    // arrAddInsideFeature.push(arrLTable);
+                    flagLRTable = 'lTable';
                 } else {
-                    arrLRSide = arrRTable;
-                    arrTh = arrLRSide[1][6].split(';');
-                    nameTable = 'rtable' + numTable;
-                    $('#divright').append('<div class="table-wrapper">');
-                    $('#divright').append('<table border="2" bgcolor="#fafad2" id="rtable' + numTable + '" align="left"><tr><td colspan="4">' + arrLRSide[0][6] + '</td></tr><tr><th>' + arrTh[0] + '</th><th>' + arrTh[1] + '</th><th>' + arrTh[2] + '</th><th>' + arrTh[3] + '</th></tr></table>');
-                    $('#divright').append('</div>');
-
-                    for (var i = 2; i < arrLRSide.length; i++) {
-                        var strTableTd = arrLRSide[i][6].split(';');
-                        // console.log(strTableTd);
-                        var idTable = "#" + nameTable;
-                        $(idTable).append('<tr><td>' + strTableTd[0] + '</td><td>' + strTableTd[1] + '</td><td>' + strTableTd[2] + '</td><td>' + strTableTd[3] + '</td></tr>');
+                    if (countBetweenConnections(arrRTable) == 0){
+                        // arrAddInsideFeature.push(arrRTable);
+                        flagLRTable = 'rTable';
                     }
                 }
-                $('table').each(function () {
-                    console.log($(this).attr("id"));
-                    var idAddTable = '#' + $(this).attr("id");
-                    var bottomTableLeft = $(idAddTable).position().top + $(idAddTable).height();
-                    var bottomMap = $('#map').position().top + $('#map').height();
-                    if (bottomMap < bottomTableLeft) {
-                        var heightMap = bottomTableLeft - $(".center").position().top;
-                        $('#map').css("height", heightMap);
+                console.log('flagLRTable=' + flagLRTable);
+                if (flagLRTable != 'null') {  // если не подсоединена хотя бы одна сторона кабеля то подсоединяем и визуализируем
+                    //сейчас будем подсоединять первую сторону кабеля и визуализировать
+                    var numTable = 0;
+                    $('table').each(function () {
+                        console.log($(this).attr("id"));
+                        numTable++;
+                    });
+                    numTable++;  //номер таблицы - следующий
+                    console.log('numTable=' + numTable);
+                    lrSelect = $('#leftRight').val();
+                    //arrLRSide = arrLTable;  // если левая сторона не подключена
+                    var arrTh;
+                    var nameTable;
+                    if (lrSelect == 'слева') {
+                        arrLRSide = arrLTable;
+                        arrTh = arrLRSide[1][6].split(';');
+                        nameTable = 'ltable' + numTable;
+                        $('#divleft').append('<div class="table-wrapper">');
+                        $('#divleft').append('<table border="2" bgcolor="#fafad2" id="ltable' + numTable + '" align="right"><tr><td colspan="4">' + arrLRSide[0][6] + '</td></tr><tr><th>' + arrTh[0] + '</th><th>' + arrTh[1] + '</th><th>' + arrTh[2] + '</th><th>' + arrTh[3] + '</th></tr></table>');
+                        $('#divleft').append('</div>');
+
+                        for (var i = 2; i < arrLRSide.length; i++) {
+                            if (flagLRTable == 'lTable') {
+                                arrLTable[i][4] = arrLTable[i][4] + ';' + nameTable;
+                            } else {
+                                arrRTable[i][4] = arrRTable[i][4] + ';' + nameTable;
+                            }
+
+                            var strTableTd = arrLRSide[i][6].split(';');
+                            // console.log(strTableTd);
+                            var idTable = "#" + nameTable;
+                            $(idTable).append('<tr><td>' + strTableTd[0] + '</td><td>' + strTableTd[1] + '</td><td>' + strTableTd[2] + '</td><td>' + strTableTd[3] + '</td></tr>');
+                        }
+                        // arrLTable[4] = arrLTable[4] + ';' + nameTable;
+                        if (flagLRTable == 'lTable') {
+                            arrAddInsideFeature.push(arrLTable);
+                        } else {
+                            arrAddInsideFeature.push(arrRTable);
+                        }
+                    } else {
+                        arrLRSide = arrRTable;
+                        arrTh = arrLRSide[1][6].split(';');
+                        nameTable = 'rtable' + numTable;
+                        $('#divright').append('<div class="table-wrapper">');
+                        $('#divright').append('<table border="2" bgcolor="#fafad2" id="rtable' + numTable + '" align="left"><tr><td colspan="4">' + arrLRSide[0][6] + '</td></tr><tr><th>' + arrTh[0] + '</th><th>' + arrTh[1] + '</th><th>' + arrTh[2] + '</th><th>' + arrTh[3] + '</th></tr></table>');
+                        $('#divright').append('</div>');
+
+                        for (var i = 2; i < arrLRSide.length; i++) {
+                            if (flagLRTable == 'lTable') {
+                                arrLTable[i][4] = arrLTable[i][4] + ';' + nameTable;
+                            } else {
+                                arrRTable[i][4] = arrRTable[i][4] + ';' + nameTable;
+                            }
+                            var strTableTd = arrLRSide[i][6].split(';');
+                            // console.log(strTableTd);
+                            var idTable = "#" + nameTable;
+                            $(idTable).append('<tr><td>' + strTableTd[0] + '</td><td>' + strTableTd[1] + '</td><td>' + strTableTd[2] + '</td><td>' + strTableTd[3] + '</td></tr>');
+                        }
+                        // arrRTable[4] = arrRTable[4] + ';' + nameTable;
+                        if (flagLRTable == 'lTable') {
+                            arrAddInsideFeature.push(arrLTable);
+                        } else {
+                            arrAddInsideFeature.push(arrRTable);
+                        }
                     }
-                });
+                    //если высота таблиц больше SVG-поля, увеличим его
+                    $('table').each(function () {
+                        console.log($(this).attr("id"));
+                        var idAddTable = '#' + $(this).attr("id");
+                        var bottomTableLeft = $(idAddTable).position().top + $(idAddTable).height();
+                        var bottomMap = $('#map').position().top + $('#map').height();
+                        if (bottomMap < bottomTableLeft) {
+                            var heightMap = bottomTableLeft - $(".center").position().top;
+                            $('#map').css("height", heightMap);
+                        }
+                    });
+
+                    console.log(arrAddInsideFeature);
+                }
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error getting featurecoord by propertyId')
@@ -1108,6 +1154,49 @@
         }
 
         return countConnections;
+    }
+
+    //проверяем муфта это или кабель, если муфта сохраняем внешние соединения
+    function saveBetweenConnIfPoint(propertyId) {
+        $.ajax({
+            type: 'GET',
+            url: service + 'featurecoord/get/' + propertyId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                // console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                // var idFeatureCoord = arrData.id;
+                // console.log('idFeatureCoord='+idFeatureCoord);
+                var geometryType = arrData.geometryType;
+                console.log('geometryType='+geometryType);
+                if (geometryType == 'Point'){
+                    console.log('Обрабатываем как муфту, сохраняем внешние соединения');
+                    console.log('arrConnInsideFeature:');
+                    console.log(arrConnInsideFeature);
+                    console.log('arrAddInsideFeature:');
+                    console.log(arrAddInsideFeature);
+                    for (var i in arrAddInsideFeature){
+                        var tableInArrInsideFeature = arrAddInsideFeature[i];
+                        // console.log(tableInArrInsideFeature);
+                        for (var n in tableInArrInsideFeature){
+                            var strInArrInsideFeature = tableInArrInsideFeature[n];
+                            var labelInStr = strInArrInsideFeature[4];
+                            var arrlabel = labelInStr.split(';');
+                            if (arrlabel.length > 1) {
+                                console.log(strInArrInsideFeature);
+                            }
+                        }
+                    }
+                } else {
+                    console.log('Обрабатываем как кабель, не сохраняем внешние соединения');
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord by propertyId')
+            }
+        });
     }
 
     /*var GetURLparameter = function () {
