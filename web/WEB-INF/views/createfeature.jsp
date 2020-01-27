@@ -1191,7 +1191,12 @@
                                 for (var k in arrConnInsideFeature){
                                     arrDesPageTable = (arrConnInsideFeature[k][3]).split(';');
                                     if ((arrDesPageTable[0] == arrlabel[1]) && (arrDesPageTable[1] == arrdescr[1])){
-                                        console.log('arrConnInsideFeature[k][0]=' + arrConnInsideFeature[k][0] + ', ' + 'strInArrInsideFeature[0]=' + strInArrInsideFeature[0]);
+                                        var connId1 = arrConnInsideFeature[k][0];
+                                        var connId2 = strInArrInsideFeature[0];
+                                        var idOneTwo = arrlabel[0] + ';'  + strInArrInsideFeature[5];
+                                        var arrIdOneTwo = [];
+                                        // console.log('arrConnInsideFeature[k][0]=' + arrConnInsideFeature[k][0] + ', strInArrInsideFeature[0]=' + strInArrInsideFeature[0] +', id1;id2=' + idOneTwo);
+                                        console.log('connId1=' + connId1 + ', connId2=' + connId2 +', propId1;propId2=' + idOneTwo);
                                     }
                                 }
                             }
