@@ -47,4 +47,9 @@ public class ConnBetweenFeatureServiceImpl implements ConnBetweenFeatureService 
     public List<ConnBetweenFeature> getByDescription(String descr) {
         return connBetweenFeatureDao.getByDescription(descr);
     }
+
+    @Override
+    public Integer delByDescription(String descr) {
+        return connBetweenFeatureDao.delByDescription(descr);
+    }
 }

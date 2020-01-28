@@ -58,4 +58,12 @@ public interface ConnBetweenFeatureService {
      * @return list all getting rows
      */
     List<ConnBetweenFeature> getByDescription(String descr);
+
+    /**
+     * method for deleting all ConnBetweenFeature with description = descr
+     *
+     * @param descr = field description in table  ConnBetweenFeature
+     * @return number of deleting rows
+     */
+    Integer delByDescription(String descr);
 }

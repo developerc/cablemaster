@@ -12,5 +12,19 @@ public interface ConnBetweenFeatureDao extends BasicDao<ConnBetweenFeature>{
      * **/
     List<ConnBetweenFeature> getConnBetweenById(long id);
 
+    /**
+     * method for getting all ConnBetweenFeature with description = descr
+     *
+     * @param descr = field description in table  ConnBetweenFeature
+     * @return list all getting rows
+     */
     List<ConnBetweenFeature> getByDescription(String descr);
+
+    /**
+     * method for deleting all ConnBetweenFeature with description = descr
+     *
+     * @param descr = field description in table  ConnBetweenFeature
+     * @return number of deleting rows
+     */
+    Integer delByDescription(String descr);
 }

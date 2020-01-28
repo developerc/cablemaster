@@ -1,5 +1,7 @@
 package ru.cablemaster.dao.impl;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import ru.cablemaster.dao.ConnBetweenFeatureDao;
 import ru.cablemaster.entity.ConnBetweenFeature;
 
@@ -23,5 +25,12 @@ public class ConnBetweenFeatureDaoImpl extends BasicDaoImpl<ConnBetweenFeature> 
         Query query = getSessionFactory().createQuery("from ConnBetweenFeature  where description = :descr");
         query.setParameter("descr", descr);
         return query.getResultList();
+    }
+
+    @Override
+    public Integer delByDescription(String descr) {
+        Query query = getSessionFactory().createQuery("DELETE ConnBetweenFeature WHERE description = :descr");
+        query.setParameter("descr", descr);
+        return query.executeUpdate();
     }
 }
