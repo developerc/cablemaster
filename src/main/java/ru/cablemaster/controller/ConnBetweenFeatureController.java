@@ -46,6 +46,12 @@ public class ConnBetweenFeatureController {
         return connBetweenFeatureService.deleteConnBetweenFeature(Long.parseLong(id));
     }
 
+    @RequestMapping(value = "/getbydescription/{descr}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public List<ConnBetweenFeature> getByDescription(@PathVariable(value = "descr") String descr){
+        return connBetweenFeatureService.getByDescription(descr);
+    }
+
     @RequestMapping(value = "/upd", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
     @ResponseBody
     public ConnBetweenFeature updConnBetweenFeature(@RequestBody ConnBetweenFeature connBetweenFeature){

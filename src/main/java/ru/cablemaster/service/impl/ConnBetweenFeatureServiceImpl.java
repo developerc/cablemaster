@@ -42,4 +42,9 @@ public class ConnBetweenFeatureServiceImpl implements ConnBetweenFeatureService 
     public List<ConnBetweenFeature> getConnBetweenById(long id) {
         return connBetweenFeatureDao.getConnBetweenById(id);
     }
+
+    @Override
+    public List<ConnBetweenFeature> getByDescription(String descr) {
+        return connBetweenFeatureDao.getByDescription(descr);
+    }
 }

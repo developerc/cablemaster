@@ -1193,10 +1193,15 @@
                                     if ((arrDesPageTable[0] == arrlabel[1]) && (arrDesPageTable[1] == arrdescr[1])){
                                         var connId1 = arrConnInsideFeature[k][0];
                                         var connId2 = strInArrInsideFeature[0];
-                                        var idOneTwo = arrlabel[0] + ';'  + strInArrInsideFeature[5];
+                                        // var idOneTwo = arrlabel[0] + ';'  + strInArrInsideFeature[5];
                                         var arrIdOneTwo = [];
+                                        arrIdOneTwo.push(connId1);
+                                        arrIdOneTwo.push(connId2);
+                                        arrIdOneTwo.push(arrlabel[0]);  //propertyId нашей муфты
+                                        arrIdOneTwo.push(strInArrInsideFeature[5]);  //propertyId подсоединенного кабеля
+                                        addBaseConnBetweenFeature(arrIdOneTwo);
                                         // console.log('arrConnInsideFeature[k][0]=' + arrConnInsideFeature[k][0] + ', strInArrInsideFeature[0]=' + strInArrInsideFeature[0] +', id1;id2=' + idOneTwo);
-                                        console.log('connId1=' + connId1 + ', connId2=' + connId2 +', propId1;propId2=' + idOneTwo);
+                                        // console.log('connId1=' + connId1 + ', connId2=' + connId2 +', propId1;propId2=' + idOneTwo);
                                     }
                                 }
                             }
@@ -1208,6 +1213,36 @@
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error getting featurecoord by propertyId')
+            }
+        });
+    }
+
+    //заносим в базу внешнее соединение
+    function addBaseConnBetweenFeature(arrIdOneTwo) {
+        console.log('arrIdOneTwo[0]=' + arrIdOneTwo[0] + ', arrIdOneTwo[1]=' + arrIdOneTwo[1] + ', arrIdOneTwo[2]=' + arrIdOneTwo[2]);
+        var Data = {};
+        var JSONObject = {
+            'connId1': arrIdOneTwo[0],
+            'connId2': arrIdOneTwo[1],
+            'description': arrIdOneTwo[2],
+            'reserved' : arrIdOneTwo[3]
+        };
+        $.ajax({
+            type: 'POST',
+            url: service + "connbetweenfeature/add",
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(JSONObject),
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('success add connbetweenfeature');
+                var stringData = JSON.stringify(result);
+                Data = JSON.parse(stringData);
+                console.log(Data);
+
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('ошибка добавления connbetweenfeature');
             }
         });
     }

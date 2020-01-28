@@ -50,4 +50,12 @@ public interface ConnBetweenFeatureService {
      * @return all ConnBetweenFeatures by connId1 or connId2
      */
     List<ConnBetweenFeature> getConnBetweenById(long id);
+
+    /**
+     * method for getting all ConnBetweenFeature with description = descr
+     *
+     * @param descr = field description in table  ConnBetweenFeature
+     * @return list all getting rows
+     */
+    List<ConnBetweenFeature> getByDescription(String descr);
 }

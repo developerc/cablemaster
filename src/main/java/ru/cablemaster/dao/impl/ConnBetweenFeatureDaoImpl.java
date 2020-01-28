@@ -17,4 +17,11 @@ public class ConnBetweenFeatureDaoImpl extends BasicDaoImpl<ConnBetweenFeature> 
         query.setParameter("Id", id);
         return query.getResultList();
     }
+
+    @Override
+    public List<ConnBetweenFeature> getByDescription(String descr) {
+        Query query = getSessionFactory().createQuery("from ConnBetweenFeature  where description = :descr");
+        query.setParameter("descr", descr);
+        return query.getResultList();
+    }
 }

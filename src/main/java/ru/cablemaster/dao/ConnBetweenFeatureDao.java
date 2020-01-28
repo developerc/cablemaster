@@ -11,4 +11,6 @@ public interface ConnBetweenFeatureDao extends BasicDao<ConnBetweenFeature>{
      *@return List ConnBetweenFeature  with success parameters
      * **/
     List<ConnBetweenFeature> getConnBetweenById(long id);
+
+    List<ConnBetweenFeature> getByDescription(String descr);
 }
