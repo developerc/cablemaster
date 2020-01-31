@@ -37,3 +37,5 @@ IDFeature (куда подключаемся);IDТаблицы (к которо�
 Name: Content-Type
 Attribute value: application/json
 Okay
+
+Доделываем функцию TrassaById() в insidefeature.jsp

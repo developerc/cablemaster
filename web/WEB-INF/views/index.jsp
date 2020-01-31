@@ -45,13 +45,13 @@
 <form class="form-inline">
     <%--<button type="button" onclick="window.location = 'http://localhost:8080/insidefeature';">ConnInsideFeature</button>--%>
     <li>
-        <a href="http://10.152.46.71:8080/insidefeature">insidefeature</a>
+        <a href="http://localhost:8080/insidefeature">insidefeature</a>
     </li>
     <li>
-        <a href="http://10.152.46.71:8080/betweenfeature">betweenfeature</a>
+        <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
     </li>
         <li>
-            <a href="http://10.152.46.71:8080/help">help</a>
+            <a href="http://localhost:8080/help">help</a>
         </li>
 
 </form>

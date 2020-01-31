@@ -13,7 +13,15 @@
     var arrData=[];
     var arrPropertyId = [];
     var countHalfThreads = 0;
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
+
+    $(document).ready(function(){
+        var idFiber = decodeURIComponent(window.location.search.substring(1));
+        console.log('idFiber=' + idFiber);
+        $('#propertyId').val(idFiber);
+        TrassaById();
+    });
+
     var DelCableFeatureByPropertyId = function () {
         console.log('DelCableFeatureByPropertyId');
         $.ajax({
@@ -374,7 +382,7 @@
           }
       }
       console.log('spisokParams=' + spisokParams);
-        window.open('http://10.152.46.71:8080/maptrassa' + spisokParams, '_blank');
+        window.open(service + 'maptrassa' + spisokParams, '_blank');
         // window.open('http://localhost:8080/maptrassa?param=0&param=1&param=3', '_blank');
 
     };
@@ -389,8 +397,15 @@
                 spisokParams+='&param=' + arrPropertyId[i];
             }
         }
-        window.open('http://10.152.46.71:8080/mapschema' + spisokParams, '_blank');
+        window.open(service + 'mapschema' + spisokParams, '_blank');
     };
+    
+    /*function GetURLparameter() {
+        var idFiber = decodeURIComponent(window.location.search.substring(1));
+        $('#propertyId').val(idFiber);
+    }*/
+
+    // GetURLparameter();
 </script>
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -399,9 +414,9 @@
     <div class="panel-body">
         <form class="form-inline">
             <label>propertyId feature:</label>
-            <input id="propertyId" value="propertyId"/>
+            <input id="propertyId" placeholder="propertyId"/>
             <label>число волокон:</label>
-            <input id="threadCount" value="число волокон"/>
+            <input id="threadCount" placeholder="число волокон"/>
             <button type="button" onclick="AddCableFeature()">Добавить feature</button>
             <button type="button" onclick="DelCableFeatureByPropertyId()">Удалить feature по propertyId</button>
             <button type="button" onclick="GetHalfThreadsByPropertyId()">Редактировать feature по propertyId</button>

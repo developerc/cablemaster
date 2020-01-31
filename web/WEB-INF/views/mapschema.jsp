@@ -34,7 +34,7 @@
     var arrSingleLine = [];
     var angleRad = 0;
     var radiusDependZoom = 0;
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var colorInside = '#000000';
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()

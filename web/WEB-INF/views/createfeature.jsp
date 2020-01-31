@@ -98,6 +98,8 @@
     var idClickedTable2;
     var indexClickedRow1;
     var indexClickedRow2;
+    var trassaTableId;
+    var trassaRowIndex;
     var heightNewRect = 50;
     var arrTabs = [];
     var arrConnInsideFeature = []; //массив строк таблиц соединений
@@ -105,6 +107,8 @@
     var arrAddInsideFeature = [];  //массив присоединенных таблиц
 
     $(document).ready(function(){
+        trassaTableId = 'null';
+        trassaRowIndex = 'null';
         idClickedTable1 = 'null';
         idClickedTable2 = 'null';
         indexClickedRow1 = 'null';
@@ -285,6 +289,9 @@
 
             var clickTableId = $(this).closest('table').attr('id');
             var clickRowIndex = $(this).index() + 1;
+
+            trassaTableId = clickTableId;
+            trassaRowIndex = clickRowIndex;
 
             //проверим может нажимаем на первую или вторую уже нажатую строку
             if ((clickTableId == idClickedTable1.substr(1)) && (clickRowIndex == indexClickedRow1)) {
@@ -574,7 +581,8 @@
             for (var i in colorConn){
                 console.log(colorConn[i]);
             }
-            // console.log(arrConnInsideFeature);
+            // изменяем в заголовке количество записей
+            changeHeaderCountRows(propertyId);
 
             //если это муфта будем сохранять внешние соединения
             saveBetweenConnIfPoint(propertyId);
@@ -664,6 +672,7 @@
             //получаем FeatureCoord by id
             getFeatureCoordById(sPageURL);
         });
+
         //Обрабатываем нажатие на меню Удалить данные
         $('#delfeature').click(function () {
             var sPageURL = decodeURIComponent(window.location.search.substring(1));
@@ -674,6 +683,30 @@
             // console.log('подключаем таблицу');
             var sPageURL = decodeURIComponent(window.location.search.substring(1));
             addConnBetweenFeature(sPageURL);
+        });
+        //строим трассу для волокна
+        $('#makeTrassa').click(function () {
+            console.log('строим трассу');
+            if (trassaTableId != 'null'){
+                console.log('trassaTableId=' + trassaTableId);
+                console.log('trassaRowIndex=' + trassaRowIndex);
+                console.log(arrConnInsideFeature);
+                for (var i in arrConnInsideFeature){
+                    var arrStr = arrConnInsideFeature[i];
+                    for (var k in arrStr){
+                        var tableIndex = arrStr[4].split(';');
+                        // console.log(tableIndex[0] + '__' + tableIndex[1]);
+                        var indFromZero = +trassaRowIndex - 1;
+                        if ((trassaTableId == tableIndex[0]) && (indFromZero == tableIndex[1])){
+                            console.log(arrStr[0] + '__' + tableIndex[0] + '__' + tableIndex[1]);
+                            window.open(service + 'insidefeature?' + arrStr[0], '_blank');
+                            break;
+                        }
+                    }
+                }
+            } else {
+                console.log('Не выбрана строка таблицы!');
+            }
         });
     });
 
@@ -873,6 +906,7 @@
                 for (var i in arrId){
                     delFeatureById(arrId[i]);
                 }
+                delConnBetweenFeatureById(propertyId);
                 getFeatureCoordById(propertyId);
             },
             error: function (jqXHR, testStatus, errorThrown) {
@@ -1247,6 +1281,52 @@
         });
     }
 
+    //удаляем внешнее соединение по ID
+    function delConnBetweenFeatureById(propertyId) {
+    console.log('delConnBetweenFeatureById, propertyId=' + propertyId);
+        $.ajax({
+            type: 'DELETE',
+            url: service + 'connbetweenfeature/delbydescription/' + propertyId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                console.log('Успешное удаление ConnBetweenFeature by ID=' + propertyId);
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Ошибка удаления ConnBetweenFeature by ID=' + propertyId);
+            }
+        });
+    }
+
+    //изменяем в заголовке количество записей
+    function changeHeaderCountRows(propertyId) {
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/propertyid/' + propertyId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                console.log('количество записей=' + arrData.length);
+                var headString = $('#h3_main').html();
+                var arrHeadString = headString.split(',');
+                arrHeadString[4] = ', количество записей=' + arrData.length;
+                headString = '';
+                for (var i in arrHeadString){
+                    headString = headString + arrHeadString[i];
+                }
+                $("h3").html(headString);
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Ошибка отображения заголовка по ID=' + propertyId);
+            }
+        });
+    }
+
+
+
     /*var GetURLparameter = function () {
         var sPageURL = decodeURIComponent(window.location.search.substring(1));
         console.log('GetURLparameter:' + sPageURL);
@@ -1295,6 +1375,7 @@
             <li id="btn1"><a href='#'><span>Добавить соединение</span></a></li>
             <li id="breakConn"><a href='#'><span>Разорвать соединение</span></a></li>
             <li id="makeCable"><a href='#'><span>Создать кабель</span></a></li>
+            <li id="makeTrassa"><a href='#'><span>Трассировка волокна</span></a></li>
             <li id="getfeature"><a href='#'><span>Получить данные</span></a></li>
             <li id="delfeature"><a href='#'><span>Удалить данные</span></a></li>
             <li id="saveAll"><a href='#'><span>Сохранить данные</span></a></li>
