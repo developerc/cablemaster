@@ -58,9 +58,65 @@
             var fullParameter = sParameterName[1].split(';');
             var propid = fullParameter[0];
             console.log('propid='+propid);
-            AddLineStringByPropertyId(propid);
+            // AddLineStringByPropertyId(propid);
+            addLineStringById(propid);
         }
     };
+
+    function addLineStringById(propid) {
+        console.log('addLineStringById');
+        var featureCoordShow = 'featurecoord/get/' + propid;
+        console.log('featureCoordShow='+featureCoordShow);
+        $.ajax({
+            type: 'GET',
+            url: service + featureCoordShow,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                // console.log(stringData);
+                var objFeature = JSON.parse(stringData);
+                // for (i in arrData) {
+                    console.log(objFeature);
+                // }
+                var geomType = objFeature.geometryType;
+                var arrGeometryCoord = objFeature.geometryCoord;
+                var arrLineCoord = [];
+                for (k in arrGeometryCoord){
+                    var arrPointCoord = [];
+                    var objGeomCoordItem = arrGeometryCoord[k];
+                    arrPointCoord[0] = objGeomCoordItem.longitude;
+                    arrPointCoord[1] = objGeomCoordItem.latitude;
+                    arrLineCoord.push(arrPointCoord);
+                    console.log('lon=' + objGeomCoordItem.longitude + ', lat=' + objGeomCoordItem.latitude);
+                }
+
+                if (geomType == 'LineString') {
+                    var linestring_feature = new ol.Feature({
+                        geometry: new ol.geom.LineString(
+                            arrLineCoord
+                        )
+                    });
+
+                    vectorSource.addFeature(linestring_feature);
+                    console.log('это LineString');
+                }
+
+                if (geomType == 'Point'){
+                    var point_feature = new ol.Feature({
+                        geometry: new ol.geom.Point(
+                            arrPointCoord
+                        )
+                    });
+                    vectorSource.addFeature(point_feature);
+                    console.log('это Point');
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord');
+            }
+        });
+    }
 
     var AddLineStringByPropertyId = function (propid) {
         console.log('AddLineStringByPropertyId');

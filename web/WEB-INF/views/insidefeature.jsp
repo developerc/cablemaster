@@ -13,14 +13,176 @@
     var arrData=[];
     var arrPropertyId = [];
     var countHalfThreads = 0;
+    var arrBetweenInsideConnection = [];
     var service = 'http://localhost:8080/';
 
     $(document).ready(function(){
         var idFiber = decodeURIComponent(window.location.search.substring(1));
-        console.log('idFiber=' + idFiber);
+        console.log(' document ready, idFiber=' + idFiber);
         $('#propertyId').val(idFiber);
-        TrassaById();
+        // TrassaById();
+        firstBetween(idFiber);
+        firstInside(idFiber);
+        makeTableConnections();
+
+        console.log('arrBetweenInsideConnection:');
+        for (var i in arrBetweenInsideConnection){
+            console.log(arrBetweenInsideConnection[i]);
+        }
     });
+
+    function makeTableConnections() {
+        trassaTableCableHtml = '';
+        trassaTableCableHtml+= '<table class="table-row-cell" border="1">';
+        trassaTableCableHtml+= '<tr>';
+        trassaTableCableHtml+= '<th>ID первая сторона</'+'th>';
+        trassaTableCableHtml+= '<th>цвет соединения</'+'th>';
+        trassaTableCableHtml+= '<th>ID вторая сторона</'+'th>';
+        trassaTableCableHtml+= '<th>propertyId</'+'th>';
+        trassaTableCableHtml+= '<th>Строка соединения</'+'th>';
+        /*trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
+        trassaTableCableHtml+= '<th>цвет модуля</'+'th>';*/
+        trassaTableCableHtml+= '</' +'tr>';
+        for (var i in arrBetweenInsideConnection){
+            if (arrBetweenInsideConnection[i].length >3){
+                trassaTableCableHtml+= '<tr>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][0] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][1] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][2] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][5] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][6] + '</' + 'th>';
+                /*trassaTableCableHtml+= '<th>' + Data.label + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.reserved + '</' + 'th>';*/
+                trassaTableCableHtml+= '</' +'tr>';
+            } else {
+                trassaTableCableHtml+= '<tr>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][1] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>'  + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][2] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>'  + '</' + 'th>';
+                trassaTableCableHtml+= '<th>'  + '</' + 'th>';
+                /*trassaTableCableHtml+= '<th>' + Data.label + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + Data.reserved + '</' + 'th>';*/
+                trassaTableCableHtml+= '</' +'tr>';
+            }
+        }
+        trassaTableCableHtml+= '</' +'table>';
+        trassaTableCableHtml+= '<button type="button" onclick="OpenMapTrassa()">Карта с трассировкой' + '</' +'button>';
+        // trassaTableCableHtml+= '<button type="button" onclick="OpenMapSchema()">Карта со схемой' + '</' +'button>';
+        $('#tableCable').html(trassaTableCableHtml);
+    }
+
+    function firstInside(idFiber) {
+        var retResp;
+
+        do {
+            retResp = getInside(idFiber);
+            arrBetweenInsideConnection.unshift(retResp);
+            idFiber = retResp[2];
+            if (idFiber == 0){
+                break;
+            }
+            retResp = getBetween(idFiber);
+            if (retResp != null){
+                arrBetweenInsideConnection.unshift(retResp);
+                if (idFiber == retResp[1]){
+                    idFiber = retResp[2];
+                } else {
+                    idFiber = retResp[1];
+                }
+            } else {
+                break;
+            }
+        } while (true);
+        /*console.log('arrBetweenInsideConnection:');
+        for (var i in arrBetweenInsideConnection){
+            console.log(arrBetweenInsideConnection[i]);
+        }*/
+    }
+
+    function firstBetween(idFiber) {
+        var retResp;
+        do {
+            retResp = getBetween(idFiber);
+            if (retResp != null){
+                arrBetweenInsideConnection.push(retResp);
+                if (idFiber == retResp[1]){
+                    idFiber = retResp[2];
+                } else {
+                    idFiber = retResp[1];
+                }
+            } else {
+                break;
+            }
+            retResp = getInside(idFiber);
+            arrBetweenInsideConnection.push(retResp);
+            idFiber = retResp[2];
+            if (idFiber == 0){
+                break;
+            }
+        } while (true);
+        /*console.log('arrBetweenInsideConnection:');
+        for (var i in arrBetweenInsideConnection){
+            console.log(arrBetweenInsideConnection[i]);
+        }*/
+    }
+
+    function getBetween(idFiber) {
+        var response = [];
+        $.ajax({
+            type: 'GET',
+            url: service + 'connbetweenfeature/getconnbetweenbyid/' + idFiber,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                arrData = JSON.parse(stringData);
+                if (arrData.length >0) {
+                    console.log('idFiber=' + idFiber);
+                    console.log(arrData[0].id + ', ' + arrData[0].connId1 + ', ' + arrData[0].connId2 + ', ' + arrData[0].description + ', ' + arrData[0].reserved);
+                    response.push(arrData[0].id);
+                    response.push(arrData[0].connId1);
+                    response.push(arrData[0].connId2);
+                    // в массиве response три элемента
+                } else {
+                    console.log('Больше нет внешних соединений');
+                    response =  null;
+                }
+
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Ошибка получения внешнего соединения');
+            }
+        });
+        console.log('response='+response);
+        return response;
+    }
+
+    function getInside(idFiber) {
+        var response = [];
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/' + idFiber,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                var Data = JSON.parse(stringData);
+                    response.push(Data.id);
+                    response.push(Data.colorThread);
+                    response.push(Data.connectedTo);
+                    response.push(Data.description);
+                    response.push(Data.label);
+                    response.push(Data.propertyId);
+                    response.push(Data.reserved);
+                    arrPropertyId.push(Data.propertyId + ';' + Data.colorThread);
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('Ошибка получения внутреннего соединения');
+            }
+        });
+        return response;
+    }
 
     var DelCableFeatureByPropertyId = function () {
         console.log('DelCableFeatureByPropertyId');
@@ -269,19 +431,6 @@
         trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
         trassaTableCableHtml+= '<th>цвет модуля</'+'th>';
         trassaTableCableHtml+= '</' +'tr>';
-        /*GetInsideById();
-        if (retId >0){
-            GetBetweenById();
-        }*/
-        /*for (var i=0; i<10; i++){
-            if (retId<0){
-                break;
-            }
-            GetInsideById();
-            if (retId >0){
-                GetBetweenById();
-            }
-        }*/
         do {
             GetInsideById();
             if (retId < 0){
