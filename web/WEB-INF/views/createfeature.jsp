@@ -105,6 +105,7 @@
     var arrConnInsideFeature = []; //массив строк таблиц соединений
     var arrString = []; //Массив строки полей. В нем 0-id, 1-colorThread, 2-connectedTo, 3-description, 4-label, 5-propertyId, 6-reserved
     var arrAddInsideFeature = [];  //массив присоединенных таблиц
+    var arrUpdateInsideFeature = []; //массив строк таблиц (муфты), которые редактируем
 
     $(document).ready(function(){
         trassaTableId = 'null';
@@ -368,13 +369,11 @@
             for (var i in connTabs) {
                 console.log(connTabs[i][0] + ','+ connTabs[i][1] + ','+connTabs[i][2] + ','+connTabs[i][3] + ','+connTabs[i][4] + ',');
             }
-            console.log("удаляем строку " + connTabsMarked);
+            console.log("удаляем строку:" + connTabsMarked);
             connTabs.splice(connTabsMarked,1);
             connTabsMarked = -1;
-            /*for (var i in connTabs) {
-                console.log(connTabs[i][0] + ','+ connTabs[i][1] + ','+connTabs[i][2] + ','+connTabs[i][3] + ','+connTabs[i][4] + ',');
-            }*/
 
+            getHeightNewRect();
 
 
             repaintConnections();
@@ -443,150 +442,153 @@
             var cell2;
             var cell3;
             var cell4;
-            console.log("сохраняем соединения");
-            //сохраняем строки таблиц
-            $('table tr').each(function () {
-                currTableId = $(this).closest('table').attr('id');
-                currTrInd = $(this).index();
-                arrString = [];
-                if (currTrInd == 0){
-                    arrString.push('null'); //поле 0: id
-                    arrString.push('null'); //поле 1: colorThread
-                    arrString.push('null'); //поле 2: connectedTo
-                    arrString.push(currTableId + ';' + currTrInd); //поле 3: description
-                    arrString.push('null'); //поле 4: label
-                    arrString.push(propertyId); //поле 5: propertyId
-                    cell1 = $(this).find('td').eq(0).text();
-                    arrString.push(cell1); //поле 6: reserved
-                    // console.log(arrString);
-                }
-                if (currTrInd == 1){
-                    arrString.push('null'); //поле 0: id
-                    arrString.push('null'); //поле 1: colorThread
-                    arrString.push('null'); //поле 2: connectedTo
-                    arrString.push(currTableId + ';' + currTrInd); //поле 3: description
-                    arrString.push('null'); //поле 4: label
-                    arrString.push(propertyId); //поле 5: propertyId
-                    cell1 = $(this).find('th').eq(0).text();
-                    cell2 = $(this).find('th').eq(1).text();
-                    cell3 = $(this).find('th').eq(2).text();
-                    cell4 = $(this).find('th').eq(3).text();
-                    arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
-                    // console.log(arrString);
-                }
-                if (currTrInd > 1){
-                    arrString.push('null'); //поле 0: id
-                    arrString.push('null'); //поле 1: colorThread
-                    arrString.push('null'); //поле 2: connectedTo
-                    arrString.push(currTableId + ';' + currTrInd); //поле 3: description
-                    arrString.push('null'); //поле 4: label
-                    arrString.push(propertyId); //поле 5: propertyId
-                    cell1 = $(this).find('td').eq(0).text();
-                    cell2 = $(this).find('td').eq(1).text();
-                    cell3 = $(this).find('td').eq(2).text();
-                    cell4 = $(this).find('td').eq(3).text();
-                    arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
-                    // console.log(arrString);
-                }
-                var JSONObject = {
-                    'description': arrString[3],
-                    'propertyId': arrString[5],
-                    'reserved': arrString[6]
-
-                };
-                $.ajax({
-                    type: 'POST',
-                    url: service + "conninsidefeature/add",
-                    contentType: 'application/json;charset=utf-8',
-                    data: JSON.stringify(JSONObject),
-                    dataType: 'json',
-                    async: false,
-                    success: function (result) {
-                        var stringData = JSON.stringify(result);
-                        arrData = JSON.parse(stringData);
-                        // console.log(result);
-                        arrString[0] = arrData.id;
+            if (getCountInsideRows(propertyId) > 0){
+                updateConnInsideIfExist(propertyId);
+            } else {
+                console.log("сохраняем соединения");
+                //сохраняем строки таблиц
+                $('table tr').each(function () {
+                    currTableId = $(this).closest('table').attr('id');
+                    currTrInd = $(this).index();
+                    arrString = [];
+                    if (currTrInd == 0) {
+                        arrString.push('null'); //поле 0: id
+                        arrString.push('null'); //поле 1: colorThread
+                        arrString.push('null'); //поле 2: connectedTo
+                        arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                        arrString.push('null'); //поле 4: label
+                        arrString.push(propertyId); //поле 5: propertyId
+                        cell1 = $(this).find('td').eq(0).text();
+                        arrString.push(cell1); //поле 6: reserved
                         // console.log(arrString);
-                        arrConnInsideFeature.push(arrString);
-                    },
-                    error: function (jqXHR, testStatus, errorThrown) {
-                        console.log('ошибка добавления conninsidefeature');
                     }
+                    if (currTrInd == 1) {
+                        arrString.push('null'); //поле 0: id
+                        arrString.push('null'); //поле 1: colorThread
+                        arrString.push('null'); //поле 2: connectedTo
+                        arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                        arrString.push('null'); //поле 4: label
+                        arrString.push(propertyId); //поле 5: propertyId
+                        cell1 = $(this).find('th').eq(0).text();
+                        cell2 = $(this).find('th').eq(1).text();
+                        cell3 = $(this).find('th').eq(2).text();
+                        cell4 = $(this).find('th').eq(3).text();
+                        arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
+                        // console.log(arrString);
+                    }
+                    if (currTrInd > 1) {
+                        arrString.push('null'); //поле 0: id
+                        arrString.push('null'); //поле 1: colorThread
+                        arrString.push('null'); //поле 2: connectedTo
+                        arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                        arrString.push('null'); //поле 4: label
+                        arrString.push(propertyId); //поле 5: propertyId
+                        cell1 = $(this).find('td').eq(0).text();
+                        cell2 = $(this).find('td').eq(1).text();
+                        cell3 = $(this).find('td').eq(2).text();
+                        cell4 = $(this).find('td').eq(3).text();
+                        arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
+                        // console.log(arrString);
+                    }
+                    var JSONObject = {
+                        'description': arrString[3],
+                        'propertyId': arrString[5],
+                        'reserved': arrString[6]
+
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: service + "conninsidefeature/add",
+                        contentType: 'application/json;charset=utf-8',
+                        data: JSON.stringify(JSONObject),
+                        dataType: 'json',
+                        async: false,
+                        success: function (result) {
+                            var stringData = JSON.stringify(result);
+                            arrData = JSON.parse(stringData);
+                            // console.log(result);
+                            arrString[0] = arrData.id;
+                            // console.log(arrString);
+                            arrConnInsideFeature.push(arrString);
+                        },
+                        error: function (jqXHR, testStatus, errorThrown) {
+                            console.log('ошибка добавления conninsidefeature');
+                        }
+                    });
+
+
                 });
-
-
-            });
-            console.log('arrConnInsideFeature=' + arrConnInsideFeature);
-            //сохраняем соединения между строками
-            var firstConn = [];
-            var secondConn = [];
-            var colorConn = [];
-            //обрабатываем первую половину соединения
-            for (var i in connTabs){
-                console.log(connTabs[i][0] + ','+ connTabs[i][1] + ','+connTabs[i][2] + ','+connTabs[i][3] + ','+connTabs[i][4] );
-                for (var n in arrConnInsideFeature){
-                    var arrTableId = arrConnInsideFeature[n][3].split(';');
-                    var toConnTabs = Number(arrTableId[1]) + 1;
-                    // console.log(toConnTabs);
-                    if ((arrTableId[0] == connTabs[i][0]) && (toConnTabs  == connTabs[i][1]) ) {
-                        console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
-                        firstConn.push(arrConnInsideFeature[n][0]);
+                console.log('arrConnInsideFeature=' + arrConnInsideFeature);
+                //сохраняем соединения между строками
+                var firstConn = [];
+                var secondConn = [];
+                var colorConn = [];
+                //обрабатываем первую половину соединения
+                for (var i in connTabs) {
+                    console.log(connTabs[i][0] + ',' + connTabs[i][1] + ',' + connTabs[i][2] + ',' + connTabs[i][3] + ',' + connTabs[i][4]);
+                    for (var n in arrConnInsideFeature) {
+                        var arrTableId = arrConnInsideFeature[n][3].split(';');
+                        var toConnTabs = Number(arrTableId[1]) + 1;
+                        // console.log(toConnTabs);
+                        if ((arrTableId[0] == connTabs[i][0]) && (toConnTabs == connTabs[i][1])) {
+                            console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
+                            firstConn.push(arrConnInsideFeature[n][0]);
+                        }
                     }
                 }
-            }
-            //обрабатываем вторую половину соединения
-            for (var i in connTabs){
-                console.log(connTabs[i][0] + ','+ connTabs[i][1] + ','+connTabs[i][2] + ','+connTabs[i][3] + ','+connTabs[i][4] );
-                for (var n in arrConnInsideFeature){
-                    var arrTableId = arrConnInsideFeature[n][3].split(';');
-                    var toConnTabs = Number(arrTableId[1]) + 1;
-                    // console.log(toConnTabs);
-                    if ((arrTableId[0] == connTabs[i][2]) && (toConnTabs  == connTabs[i][3]) ) {
-                        console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
-                        secondConn.push(arrConnInsideFeature[n][0]);
-                        colorConn.push(connTabs[i][4]);
+                //обрабатываем вторую половину соединения
+                for (var i in connTabs) {
+                    console.log(connTabs[i][0] + ',' + connTabs[i][1] + ',' + connTabs[i][2] + ',' + connTabs[i][3] + ',' + connTabs[i][4]);
+                    for (var n in arrConnInsideFeature) {
+                        var arrTableId = arrConnInsideFeature[n][3].split(';');
+                        var toConnTabs = Number(arrTableId[1]) + 1;
+                        // console.log(toConnTabs);
+                        if ((arrTableId[0] == connTabs[i][2]) && (toConnTabs == connTabs[i][3])) {
+                            console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
+                            secondConn.push(arrConnInsideFeature[n][0]);
+                            colorConn.push(connTabs[i][4]);
+                        }
                     }
                 }
-            }
-            //Делаем Update массиву соединений
-            for (var i in firstConn){
-                for (n in arrConnInsideFeature){
-                    if (firstConn[i] == arrConnInsideFeature[n][0]){
-                        arrConnInsideFeature[n][2] = secondConn[i];
-                        arrConnInsideFeature[n][1] = colorConn[i];
+                //Делаем Update массиву соединений
+                for (var i in firstConn) {
+                    for (n in arrConnInsideFeature) {
+                        if (firstConn[i] == arrConnInsideFeature[n][0]) {
+                            arrConnInsideFeature[n][2] = secondConn[i];
+                            arrConnInsideFeature[n][1] = colorConn[i];
+                        }
                     }
                 }
-            }
-            for (var i in secondConn){
-                for (n in arrConnInsideFeature){
-                    if (secondConn[i] == arrConnInsideFeature[n][0]){
-                        arrConnInsideFeature[n][2] = firstConn[i];
-                        arrConnInsideFeature[n][1] = colorConn[i];
+                for (var i in secondConn) {
+                    for (n in arrConnInsideFeature) {
+                        if (secondConn[i] == arrConnInsideFeature[n][0]) {
+                            arrConnInsideFeature[n][2] = firstConn[i];
+                            arrConnInsideFeature[n][1] = colorConn[i];
+                        }
                     }
                 }
-            }
-            //Делаем Update базы
-            updateConnInsideFeature();
+                //Делаем Update базы
+                updateConnInsideFeature();
 
-            //просмотр массивов
-            console.log('firstConn= ...');
-            for (var i in firstConn){
-                console.log(firstConn[i]);
-            }
-            console.log('secondConn= ...');
-            for (var i in secondConn){
-                console.log(secondConn[i]);
-            }
-            console.log('colorConn= ...');
-            for (var i in colorConn){
-                console.log(colorConn[i]);
-            }
-            // изменяем в заголовке количество записей
-            changeHeaderCountRows(propertyId);
+                //просмотр массивов
+                console.log('firstConn= ...');
+                for (var i in firstConn) {
+                    console.log(firstConn[i]);
+                }
+                console.log('secondConn= ...');
+                for (var i in secondConn) {
+                    console.log(secondConn[i]);
+                }
+                console.log('colorConn= ...');
+                for (var i in colorConn) {
+                    console.log(colorConn[i]);
+                }
+                // изменяем в заголовке количество записей
+                changeHeaderCountRows(propertyId);
 
-            //если это муфта будем сохранять внешние соединения
-            saveBetweenConnIfPoint(propertyId);
-
+                //если это муфта будем сохранять внешние соединения
+                saveBetweenConnIfPoint(propertyId);
+            }
         });
         //делаем кабель
         $('#makeCable').click(function () {
@@ -1325,16 +1327,149 @@
         });
     }
 
+    //находим количество строк в таблицах муфты, здесь заполняем массив arrConnInsideFeature
+    function getCountInsideRows(propertyId) {
+        var countInsideRows;
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/propertyid/' + propertyId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                countInsideRows = arrData.length;
+                console.log('количество записей=' + arrData.length);
+                arrConnInsideFeature = [];
+                for (var i in arrData){
+                    var arrString = [];
+                    arrString.push(arrData[i].id); //id
+                    arrString.push(arrData[i].connectedTo); //connectedTo
+                    arrString.push(arrData[i].propertyId); //properyId
+                    arrString.push(arrData[i].colorThread); //colorThread
+                    arrString.push(arrData[i].description); //description
+                    arrString.push(arrData[i].label); //label
+                    arrString.push(arrData[i].reserved); //reserved
+                    arrConnInsideFeature.push(arrString);
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord by propertyId')
+            }
+        });
+        return countInsideRows;
+    }
 
+    //здесь делаем update муфте если уже существует
+    function updateConnInsideIfExist(propertyId) {
+        console.log('updateConnInsideIfExist если муфта уже существует, propertyId=' + propertyId);
+        // var propertyId = decodeURIComponent(window.location.search.substring(1));
+        var currTableId;
+        var currTrInd;
+        var cell1;
+        var cell2;
+        var cell3;
+        var cell4;
+        var differenceUpdateAndConn = [];
+        arrUpdateInsideFeature = [];
+        $('table tr').each(function () {
+            currTableId = $(this).closest('table').attr('id');
+            currTrInd = $(this).index();
+            arrString = [];
+            if (currTrInd == 0) {
+                arrString.push('null'); //поле 0: id
+                arrString.push('null'); //поле 1: colorThread
+                arrString.push('null'); //поле 2: connectedTo
+                arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                arrString.push('null'); //поле 4: label
+                arrString.push(propertyId); //поле 5: propertyId
+                cell1 = $(this).find('td').eq(0).text();
+                arrString.push(cell1); //поле 6: reserved
+                // console.log(arrString);
+            }
+            if (currTrInd == 1) {
+                arrString.push('null'); //поле 0: id
+                arrString.push('null'); //поле 1: colorThread
+                arrString.push('null'); //поле 2: connectedTo
+                arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                arrString.push('null'); //поле 4: label
+                arrString.push(propertyId); //поле 5: propertyId
+                cell1 = $(this).find('th').eq(0).text();
+                cell2 = $(this).find('th').eq(1).text();
+                cell3 = $(this).find('th').eq(2).text();
+                cell4 = $(this).find('th').eq(3).text();
+                arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
+                // console.log(arrString);
+            }
+            if (currTrInd > 1) {
+                arrString.push('null'); //поле 0: id
+                arrString.push('null'); //поле 1: colorThread
+                arrString.push('null'); //поле 2: connectedTo
+                arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                arrString.push('null'); //поле 4: label
+                arrString.push(propertyId); //поле 5: propertyId
+                cell1 = $(this).find('td').eq(0).text();
+                cell2 = $(this).find('td').eq(1).text();
+                cell3 = $(this).find('td').eq(2).text();
+                cell4 = $(this).find('td').eq(3).text();
+                arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
+                // console.log(arrString);
+            }
+            arrUpdateInsideFeature.push(arrString);
+        });
+        //создаем массив differenceUpdateAndConn - разницу между arrUpdateInsideFeature и arrConnInsideFeature
+        for (var i in arrUpdateInsideFeature){
+            var flagDiff = true;
+            for (var k in arrConnInsideFeature){
+                if (arrUpdateInsideFeature[i][3] == arrConnInsideFeature[k][4]){  //label
+                    flagDiff = false;
+                    break;
+                }
+            }
+            if (flagDiff == true){
+                differenceUpdateAndConn.push(arrUpdateInsideFeature[i]);
+            }
+        }
 
-    /*var GetURLparameter = function () {
-        var sPageURL = decodeURIComponent(window.location.search.substring(1));
-        console.log('GetURLparameter:' + sPageURL);
-        $("h3.head").html("Обрабатываем feature id=" + sPageURL);
-    }*/
+        console.log('arrConnInsideFeature:');
+        for (var i in arrConnInsideFeature) {
+            console.log(arrConnInsideFeature[i]);
+        }
+        console.log('arrUpdateInsideFeature:');
+        for (var i in arrUpdateInsideFeature) {
+            console.log(arrUpdateInsideFeature[i]);
+        }
+        console.log('differenceUpdateAndConn:');
+        for (var i in differenceUpdateAndConn) {
+            console.log(differenceUpdateAndConn[i]);
+        }
+        console.log('arrAddInsideFeature:');
+        for (var i in arrAddInsideFeature) {
+            console.log(arrAddInsideFeature[i]);
+        }
+    }
 
+    //получаем высоту белого квадрата между таблицами
+    function getHeightNewRect() {
+        $('table').each(function () {
+            console.log('Имеется таблица:' + $(this).attr("id"));
+        var idTable = '#' + $(this).attr("id");
 
-    // GetURLparameter();
+        var bottomTable = $(idTable).position().top + $(idTable).height();
+        var bottomMap = $('#map').position().top + $('#map').height();
+        if (bottomMap < bottomTable) {
+            var heightMap = bottomTable - $(".center").position().top;
+            $('#map').css("height", heightMap);
+            heightNewRect = heightMap;
+        } else {
+            heightNewRect = bottomMap;
+
+        }
+            console.log("heightNewRect=" + heightNewRect + ", heightMap=" + heightMap + ', bottomTable=' + bottomTable);
+    });
+    }
+
 </script>
 <div class=".head h3">
     <h3 id="h3_main">Настраиваем Feature</h3>

@@ -39,3 +39,11 @@ Attribute value: application/json
 Okay
 
 Доделываем функцию TrassaById() в insidefeature.jsp
+
+делаем createfeature.jsp
+Когда исполняем saveAll в случае если записей с таким propertyId больше 0 сохраняем изменения.
+getCountInsideRows формирует массив arrConnInsideFeature со строками скачанными из базы.
+Так же формирует массив строк из текущей странички arrUpdateInsideFeature.
+Сравним эти массивы и добавим в базу недостающие строки.
+После этого получим массив соединений который был в базе и в текущей таблице. Сделаем Update на отличающиеся строки.
+Получили массив разницу, Делаем updateConnInsideIfExist()

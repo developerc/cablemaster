@@ -44,12 +44,12 @@
 </form>
 <form class="form-inline">
     <%--<button type="button" onclick="window.location = 'http://localhost:8080/insidefeature';">ConnInsideFeature</button>--%>
-    <li>
+   <%-- <li>
         <a href="http://localhost:8080/insidefeature">insidefeature</a>
     </li>
     <li>
         <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
-    </li>
+    </li>--%>
         <li>
             <a href="http://localhost:8080/help">help</a>
         </li>
