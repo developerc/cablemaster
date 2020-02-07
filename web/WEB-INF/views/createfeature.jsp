@@ -515,8 +515,6 @@
                             console.log('ошибка добавления conninsidefeature');
                         }
                     });
-
-
                 });
                 console.log('arrConnInsideFeature=' + arrConnInsideFeature);
                 //сохраняем соединения между строками
@@ -1371,7 +1369,7 @@
         var cell2;
         var cell3;
         var cell4;
-        var differenceUpdateAndConn = [];
+        var arrDifferenceUpdateAndConn = [];
         arrUpdateInsideFeature = [];
         $('table tr').each(function () {
             currTableId = $(this).closest('table').attr('id');
@@ -1428,26 +1426,178 @@
                 }
             }
             if (flagDiff == true){
-                differenceUpdateAndConn.push(arrUpdateInsideFeature[i]);
+                arrDifferenceUpdateAndConn.push(arrUpdateInsideFeature[i]);
             }
+        }
+        //
+        console.log('arrUpdateInsideFeature:');
+        for (var i in arrUpdateInsideFeature) {
+            console.log(arrUpdateInsideFeature[i]);
+        }
+        //
+        arrUpdateInsideFeature = [];
+        for (var i in arrDifferenceUpdateAndConn){
+            var JSONObject = {
+                'description': arrDifferenceUpdateAndConn[i][3],
+                'propertyId': arrDifferenceUpdateAndConn[i][5],
+                'reserved': arrDifferenceUpdateAndConn[i][6]
+
+            };
+            $.ajax({
+                type: 'POST',
+                url: service + "conninsidefeature/add",
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify(JSONObject),
+                dataType: 'json',
+                async: false,
+                success: function (result) {
+                    var arrString = [];
+                    var stringData = JSON.stringify(result);
+                    var objData = JSON.parse(stringData);
+                    arrString[0] = objData.id;
+                    arrString[1] = objData.colorThread;
+                    arrString[2] = objData.connectedTo;
+                    arrString[3] = objData.description;
+                    arrString[4] = objData.label;
+                    arrString[5] = objData.propertyId;
+                    arrString[6] = objData.reserved;
+                    // console.log(arrString);
+                    arrUpdateInsideFeature.push(arrString);
+                },
+                error: function (jqXHR, testStatus, errorThrown) {
+                    console.log('ошибка добавления conninsidefeature');
+                }
+            });
+        }
+        //сохраняем соединения между строками
+        //сначала получим arrConnInsideFeature здесь массив в формате arrUpdateInsideFeature (согласен, говнокод, но ничего не поделаешь)
+        $.ajax({
+            type: 'GET',
+            url: service + 'conninsidefeature/get/propertyid/' + propertyId,
+            dataType: 'json',
+            async: false,
+            success: function (result) {
+                var stringData = JSON.stringify(result);
+                // console.log(stringData);
+                var arrData = JSON.parse(stringData);
+                // console.log('количество записей=' + arrData.length);
+                arrConnInsideFeature = [];
+                for (var i in arrData){
+                    var arrString = [];
+                    arrString.push(arrData[i].id); //id
+                    arrString.push(arrData[i].colorThread); //colorThread
+                    arrString.push(arrData[i].connectedTo); //connectedTo
+                    arrString.push(arrData[i].description); //description
+                    arrString.push(arrData[i].label); //label
+                    arrString.push(arrData[i].propertyId); //properyId
+                    arrString.push(arrData[i].reserved); //reserved
+                    arrConnInsideFeature.push(arrString);
+                }
+            },
+            error: function (jqXHR, testStatus, errorThrown) {
+                console.log('error getting featurecoord by propertyId')
+            }
+        });
+        console.log('arrConnInsideFeature:');
+        for (var i in arrConnInsideFeature) {
+            console.log(arrConnInsideFeature[i]);
+        }
+        var firstConn = [];
+        var secondConn = [];
+        var colorConn = [];
+        //обрабатываем первую половину соединения
+        for (var i in connTabs) {
+            console.log(connTabs[i][0] + ',' + connTabs[i][1] + ',' + connTabs[i][2] + ',' + connTabs[i][3] + ',' + connTabs[i][4]);
+            for (var n in arrConnInsideFeature) {
+                var arrTableId = arrConnInsideFeature[n][3].split(';');
+                var toConnTabs = Number(arrTableId[1]) + 1;
+                // console.log(toConnTabs);
+                if ((arrTableId[0] == connTabs[i][0]) && (toConnTabs == connTabs[i][1])) {
+                    console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
+                    firstConn.push(arrConnInsideFeature[n][0]);
+                }
+            }
+        }
+        //обрабатываем вторую половину соединения
+        for (var i in connTabs) {
+            console.log(connTabs[i][0] + ',' + connTabs[i][1] + ',' + connTabs[i][2] + ',' + connTabs[i][3] + ',' + connTabs[i][4]);
+            for (var n in arrConnInsideFeature) {
+                var arrTableId = arrConnInsideFeature[n][3].split(';');
+                var toConnTabs = Number(arrTableId[1]) + 1;
+                // console.log(toConnTabs);
+                if ((arrTableId[0] == connTabs[i][2]) && (toConnTabs == connTabs[i][3])) {
+                    console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
+                    secondConn.push(arrConnInsideFeature[n][0]);
+                    colorConn.push(connTabs[i][4]);
+                }
+            }
+        }
+        //удалим все соединения из arrConnInsideFeature
+        for (var i in arrConnInsideFeature){
+            arrConnInsideFeature[i][1] = 'null';
+            arrConnInsideFeature[i][2] = 0;
+        }
+
+        //Делаем Update массиву соединений
+        for (var i in firstConn) {
+            for (n in arrConnInsideFeature) {
+                if (firstConn[i] == arrConnInsideFeature[n][0]) {
+                    arrConnInsideFeature[n][2] = secondConn[i];
+                    arrConnInsideFeature[n][1] = colorConn[i];
+                }
+            }
+        }
+        for (var i in secondConn) {
+            for (n in arrConnInsideFeature) {
+                if (secondConn[i] == arrConnInsideFeature[n][0]) {
+                    arrConnInsideFeature[n][2] = firstConn[i];
+                    arrConnInsideFeature[n][1] = colorConn[i];
+                }
+            }
+        }
+        //Делаем Update базы
+        updateConnInsideFeature();
+
+        // изменяем в заголовке количество записей
+        changeHeaderCountRows(propertyId);
+
+        //если это муфта будем сохранять внешние соединения
+        saveBetweenConnIfPoint(propertyId);
+
+        console.log('connTabs:');
+        for (var i in connTabs) {
+            console.log(connTabs[i]);
+        }
+        console.log('firstConn:');
+        for (var i in firstConn) {
+            console.log(firstConn[i]);
+        }
+        console.log('secondConn:');
+        for (var i in secondConn) {
+            console.log(secondConn[i]);
+        }
+        console.log('colorConn:');
+        for (var i in colorConn) {
+            console.log(colorConn[i]);
         }
 
         console.log('arrConnInsideFeature:');
         for (var i in arrConnInsideFeature) {
             console.log(arrConnInsideFeature[i]);
         }
-        console.log('arrUpdateInsideFeature:');
+        /*console.log('arrDifferenceUpdateAndConn:');
+        for (var i in arrDifferenceUpdateAndConn) {
+            console.log(arrDifferenceUpdateAndConn[i]);
+        }*/
+        /*console.log('arrUpdateInsideFeature:');
         for (var i in arrUpdateInsideFeature) {
             console.log(arrUpdateInsideFeature[i]);
-        }
-        console.log('differenceUpdateAndConn:');
-        for (var i in differenceUpdateAndConn) {
-            console.log(differenceUpdateAndConn[i]);
-        }
-        console.log('arrAddInsideFeature:');
+        }*/
+
+        /*console.log('arrAddInsideFeature:');
         for (var i in arrAddInsideFeature) {
             console.log(arrAddInsideFeature[i]);
-        }
+        }*/
     }
 
     //получаем высоту белого квадрата между таблицами
