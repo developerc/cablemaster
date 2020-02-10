@@ -41,6 +41,8 @@
     <button type="button" onclick="DelFeatureByPropertyId()">Delete</button>
     <label>Показывать propertyName:</label>
     <input type="checkbox" name="cb1" id="check1" value="1" checked />
+        <label for="inputlabel">Feature label:</label>
+        <input type="text" id="inputlabel" size="10">
 </form>
 <form class="form-inline">
     <%--<button type="button" onclick="window.location = 'http://localhost:8080/insidefeature';">ConnInsideFeature</button>--%>
@@ -248,6 +250,7 @@
         var JSONfeatureCoord = {
             'geometryType':'Point',
             'propertyId':nextid,
+            'label':$("#inputlabel").val(),
             // 'propertyName': featurePropertyName,
             'propertyName': $("#propName option:selected").val(),
             'geometryCoord':arrGeometryCoord
@@ -329,6 +332,7 @@
         var JSONfeatureCoord = {
             'geometryType':'LineString',
             'propertyId':nextid,
+            'label':$("#inputlabel").val(),
             // 'propertyName': featurePropertyName,
             'propertyName': $("#propName option:selected").val(),
             'geometryCoord':arrGeometryCoord
@@ -490,7 +494,8 @@
                         });
 
                         if($('#check1').prop('checked')) {
-                            featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                            featurePropertyName = objFeature.id + '_' + objFeature.label;
+                            // featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
                         } else {
                             featurePropertyName = '';
                         }
@@ -507,7 +512,8 @@
                             name: objFeature.id  //при отрисовке присвоим свойство 'name'  равным id, что бы при select-e можно было сформировать таблицу
                         });
                         if($('#check1').prop('checked')) {
-                            featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
+                            featurePropertyName = objFeature.id + '_' + objFeature.label;
+                            // featurePropertyName = objFeature.propertyId + '_' + objFeature.propertyName;
                         } else {
                             featurePropertyName = '';
                         }
