@@ -14,7 +14,7 @@
     var arrPropertyId = [];
     var countHalfThreads = 0;
     var arrBetweenInsideConnection = [];
-    var service = 'http://localhost:8080/';
+    var service = 'http://10.152.46.71:8080/';
 
     $(document).ready(function(){
         var idFiber = decodeURIComponent(window.location.search.substring(1));

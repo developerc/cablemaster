@@ -53,14 +53,14 @@
         <a href="http://localhost:8080/betweenfeature">betweenfeature</a>
     </li>--%>
         <li>
-            <a href="http://localhost:8080/help">help</a>
+            <a href="http://10.152.46.71:8080/help">help</a>
         </li>
 
 </form>
 
 
 <script>
-    var service = 'http://localhost:8080/';
+    var service = 'http://10.152.46.71:8080/';
     var arrCoords = [];
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем

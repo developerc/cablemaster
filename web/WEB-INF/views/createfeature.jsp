@@ -87,7 +87,7 @@
 </head>
 <body>
 <script>
-    var service = 'http://localhost:8080/';
+    var service = 'http://10.152.46.71:8080/';
     var tables ={};  //объявляем объект таблицы
     var connTabs=[]; //обьявляем массив соединений
     var connTabsMarked; //отмеченная строка массива соединений
@@ -588,6 +588,141 @@
                 saveBetweenConnIfPoint(propertyId);
             }
         });
+
+        //Сохраняем кабель как из шаблона
+        $('#saveAsFromTemplate').click(function () {
+            console.log('column4=' + $('#column4').val());
+            console.log('column5=' + $('#column5').val());
+            arrConnInsideFeature = [];
+            var propertyId = $('#column4').val();
+            var currTableId;
+            var currTrInd;
+            var cell1;
+            var cell2;
+            var cell3;
+            var cell4;
+            $('table tr').each(function () {
+                currTableId = $(this).closest('table').attr('id');
+                currTrInd = $(this).index();
+                arrString = [];
+                if (currTrInd == 0) {
+                    arrString.push('null'); //поле 0: id
+                    arrString.push('null'); //поле 1: colorThread
+                    arrString.push('null'); //поле 2: connectedTo
+                    arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                    arrString.push('null'); //поле 4: label
+                    arrString.push(propertyId); //поле 5: propertyId
+                    cell1 = $('#column5').val(); //новый заголовок
+                    arrString.push(cell1); //поле 6: reserved
+                    // console.log(arrString);
+                }
+                if (currTrInd == 1) {
+                    arrString.push('null'); //поле 0: id
+                    arrString.push('null'); //поле 1: colorThread
+                    arrString.push('null'); //поле 2: connectedTo
+                    arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                    arrString.push('null'); //поле 4: label
+                    arrString.push(propertyId); //поле 5: propertyId
+                    cell1 = $(this).find('th').eq(0).text();
+                    cell2 = $(this).find('th').eq(1).text();
+                    cell3 = $(this).find('th').eq(2).text();
+                    cell4 = $(this).find('th').eq(3).text();
+                    arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
+                    // console.log(arrString);
+                }
+                if (currTrInd > 1) {
+                    arrString.push('null'); //поле 0: id
+                    arrString.push('null'); //поле 1: colorThread
+                    arrString.push('null'); //поле 2: connectedTo
+                    arrString.push(currTableId + ';' + currTrInd); //поле 3: description
+                    arrString.push('null'); //поле 4: label
+                    arrString.push(propertyId); //поле 5: propertyId
+                    cell1 = $(this).find('td').eq(0).text();
+                    cell2 = $(this).find('td').eq(1).text();
+                    cell3 = $(this).find('td').eq(2).text();
+                    cell4 = $(this).find('td').eq(3).text();
+                    arrString.push(cell1 + "; " + cell2 + "; " + cell3 + "; " + cell4); //поле 6: reserved
+                    // console.log(arrString);
+                }
+                var JSONObject = {
+                    'description': arrString[3],
+                    'propertyId': arrString[5],
+                    'reserved': arrString[6]
+
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: service + "conninsidefeature/add",
+                    contentType: 'application/json;charset=utf-8',
+                    data: JSON.stringify(JSONObject),
+                    dataType: 'json',
+                    async: false,
+                    success: function (result) {
+                        var stringData = JSON.stringify(result);
+                        arrData = JSON.parse(stringData);
+                        // console.log(result);
+                        arrString[0] = arrData.id;
+                        // console.log(arrString);
+                        arrConnInsideFeature.push(arrString);
+                    },
+                    error: function (jqXHR, testStatus, errorThrown) {
+                        console.log('ошибка добавления conninsidefeature');
+                    }
+                });
+            });
+            console.log('arrConnInsideFeature=' + arrConnInsideFeature);
+            //сохраняем соединения между строками
+            var firstConn = [];
+            var secondConn = [];
+            var colorConn = [];
+            //обрабатываем первую половину соединения
+            for (var i in connTabs) {
+                console.log(connTabs[i][0] + ',' + connTabs[i][1] + ',' + connTabs[i][2] + ',' + connTabs[i][3] + ',' + connTabs[i][4]);
+                for (var n in arrConnInsideFeature) {
+                    var arrTableId = arrConnInsideFeature[n][3].split(';');
+                    var toConnTabs = Number(arrTableId[1]) + 1;
+                    // console.log(toConnTabs);
+                    if ((arrTableId[0] == connTabs[i][0]) && (toConnTabs == connTabs[i][1])) {
+                        console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
+                        firstConn.push(arrConnInsideFeature[n][0]);
+                    }
+                }
+            }
+            //обрабатываем вторую половину соединения
+            for (var i in connTabs) {
+                console.log(connTabs[i][0] + ',' + connTabs[i][1] + ',' + connTabs[i][2] + ',' + connTabs[i][3] + ',' + connTabs[i][4]);
+                for (var n in arrConnInsideFeature) {
+                    var arrTableId = arrConnInsideFeature[n][3].split(';');
+                    var toConnTabs = Number(arrTableId[1]) + 1;
+                    // console.log(toConnTabs);
+                    if ((arrTableId[0] == connTabs[i][2]) && (toConnTabs == connTabs[i][3])) {
+                        console.log(arrConnInsideFeature[n][3] + ', id=' + arrConnInsideFeature[n][0]);
+                        secondConn.push(arrConnInsideFeature[n][0]);
+                        colorConn.push(connTabs[i][4]);
+                    }
+                }
+            }
+            //Делаем Update массиву соединений
+            for (var i in firstConn) {
+                for (n in arrConnInsideFeature) {
+                    if (firstConn[i] == arrConnInsideFeature[n][0]) {
+                        arrConnInsideFeature[n][2] = secondConn[i];
+                        arrConnInsideFeature[n][1] = colorConn[i];
+                    }
+                }
+            }
+            for (var i in secondConn) {
+                for (n in arrConnInsideFeature) {
+                    if (secondConn[i] == arrConnInsideFeature[n][0]) {
+                        arrConnInsideFeature[n][2] = firstConn[i];
+                        arrConnInsideFeature[n][1] = colorConn[i];
+                    }
+                }
+            }
+            //Делаем Update базы
+            updateConnInsideFeature();
+            $("h3").html("Сохранили кабель как из шаблона, propertyId=" + propertyId);
+        });
         //делаем кабель
         $('#makeCable').click(function () {
             console.log("Делаем кабель");
@@ -706,6 +841,61 @@
                 }
             } else {
                 console.log('Не выбрана строка таблицы!');
+            }
+        });
+        $('#addSplitter').click(function () {
+            curTableNum = 0;
+            $('table').each(function () {
+                console.log($(this).attr("id"));
+                curTableNum++;
+            });
+            // numTable++;  //номер таблицы - следующий
+            curTableNum++;  //перед созданием новой таблицы увеличим номер
+            lrSelect = $('#leftRight').val();
+            // $("#mytext").html(lrSelect);
+            if (lrSelect == 'слева') {
+                var idTable = '#ltable' + curTableNum;
+                $('#divleft').append('<div class="table-wrapper">');
+                $('#divleft').append('<table border="2" bgcolor="#fafad2" id="ltable' + curTableNum + '" align="right"><tr><td colspan="4">' + $('#column5').val() + '</td></tr><tr><th>' + 'Пусто' + '</th><th>' + 'Пусто' + '</th><th>' + 'Назначение' + '</th><th>' + '№' + '</th></tr></table>');
+                $(idTable).append('<tr><td>' + 'Пусто' + '</td><td>' + 'Пусто' + '</td><td>' + 'Вход' + '</td><td>' + '0' + '</td></tr>');
+                for (var i = 1; i < 9; i++) {
+                    $(idTable).append('<tr><td>' + 'Пусто' + '</td><td>' + 'Пусто' + '</td><td>' + 'Выход' + '</td><td>' + i + '</td></tr>');
+                }
+                $('#divleft').append('</div>');
+
+                //если высота таблиц больше SVG-поля, увеличим его
+                var idAddTable = '#ltable' + curTableNum;
+                var bottomTableLeft = $(idAddTable).position().top + $(idAddTable).height();
+                // $("#mytext").html(bottomTableLeft);
+                var bottomMap = $('#map').position().top + $('#map').height();
+                if (bottomMap < bottomTableLeft) {
+                    var heightMap = bottomTableLeft - $(".center").position().top;
+                    $('#map').css("height", heightMap);
+                    // heightNewRect = heightMap;
+                    // console.log("heightNewRect=" + heightNewRect + "heightMap=" + heightMap);
+                }
+
+            } else {
+                var idTable = '#rtable' + curTableNum;
+                $('#divright').append('<div class="table-wrapper">');
+                $('#divright').append('<table border="2" bgcolor="#fafad2" id="rtable' + curTableNum + '" align="left"><tr><td colspan="4">' + $('#column5').val() + '</td></tr><tr><th>' + '№' + '</th><th>' + 'Назначение' + '</th><th>' + 'Пусто' + '</th><th>' + 'Пусто' + '</th></tr></table>');
+                $(idTable).append('<tr><td>' + '0' + '</td><td>' + 'Вход' + '</td><td>' + 'Пусто' + '</td><td>' + 'Пусто' + '</td></tr>');
+                for (var i = 1; i < 9; i++) {
+                    $(idTable).append('<tr><td>' + i + '</td><td>' + 'Вход' + '</td><td>' + 'Пусто' + '</td><td>' + 'Пусто' + '</td></tr>');
+                }
+                $('#divright').append('</div>');
+
+                //если высота таблиц больше SVG-поля, увеличим его
+                var idAddTable = '#rtable' + curTableNum;
+                var bottomTableRight = $(idAddTable).position().top + $(idAddTable).height();
+                // $("#mytext").html(bottomTableRight);
+                var bottomMap = $('#map').position().top + $('#map').height();
+                if (bottomMap < bottomTableRight) {
+                    var heightMap = bottomTableRight - $(".center").position().top;
+                    $('#map').css("height", heightMap);
+                    // heightNewRect = heightMap;
+                    // console.log("heightNewRect=" + heightNewRect + "heightMap=" + heightMap);
+                }
             }
         });
     });
@@ -947,11 +1137,12 @@
                 // console.log('idFeatureCoord='+idFeatureCoord);
                 var geometryType = arrData.geometryType;
                 // console.log('geometryType='+geometryType);
-                var propertyId = arrData.propertyId;
+                // var propertyId = arrData.propertyId;
+                var label = arrData.label;
                 // console.log('propertyId='+propertyId);
                 var propertyName = arrData.propertyName;
                 // console.log('propertyName='+propertyName);
-                $("h3").html("Обрабатываем idFeatureCoord=" + idFeatureCoord + ', geometryType='+geometryType + ', propertyId='+propertyId + ', propertyName='+propertyName);
+                $("h3").html("Обрабатываем idFeatureCoord=" + idFeatureCoord + ', geometryType='+geometryType + ', label='+label + ', propertyName='+propertyName);
                 //получим данные по этой Feature
                 getConnInsideFeature(sPageURL);
             },
@@ -1664,6 +1855,8 @@
             <li id="getfeature"><a href='#'><span>Получить данные</span></a></li>
             <li id="delfeature"><a href='#'><span>Удалить данные</span></a></li>
             <li id="saveAll"><a href='#'><span>Сохранить данные</span></a></li>
+            <li id="saveAsFromTemplate"><a href='#'><span>Сохранить как из шаблона</span></a></li>
+            <li id="addSplitter"><a href='#'><span>Добавить сплиттер</span></a></li>
         </ul>
     </div>
     <div class="wrapper">
