@@ -87,7 +87,7 @@
 </head>
 <body>
 <script>
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var tables ={};  //объявляем объект таблицы
     var connTabs=[]; //обьявляем массив соединений
     var connTabsMarked; //отмеченная строка массива соединений

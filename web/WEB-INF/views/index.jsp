@@ -36,9 +36,9 @@
     <label>propertyName:</label>
     <select id="propName"></select>
     <%--<label id="labelNextId">nextid=0</label>--%>
-    <label>Удалить по propertyId:</label>
+    <label>Удалить по ID:</label>
     <input type="text" id="nextidid" size="10">
-    <button type="button" onclick="DelFeatureByPropertyId()">Delete</button>
+    <button type="button" onclick="DelFeatCoorById()">Delete</button>
     <label>Показывать propertyName:</label>
     <input type="checkbox" name="cb1" id="check1" value="1" checked />
         <label for="inputlabel">Feature label:</label>
@@ -60,7 +60,7 @@
 
 
 <script>
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
     var arrCoords = [];
     var nextid = 0;             //счетчик уникального ID для карты (propertyId)
     var JSONmodifyCoord = {};   //обьект FeatureCoord после модификации его пользователем
@@ -222,10 +222,14 @@
             });
         }
         if(this.value == 'addLine'){
+            selectSingleClick = null;
+            map.removeInteraction(draw);
+            map.removeInteraction(modify);
             map.removeInteraction(selectSingleClick);
             addInteraction();
         }
         if(this.value == 'editLine'){
+            selectSingleClick = null;
             map.removeInteraction(draw);
             map.removeInteraction(selectSingleClick);
             map.addInteraction(modify);
@@ -743,7 +747,7 @@
                 console.log(stringData);
                 var arrData = JSON.parse(stringData);
                 idFeatureCoord = arrData[0].id;
-                DelFeatCoorById(idFeatureCoord);
+                DelFeatCoorById();
             },
             error: function (jqXHR, testStatus, errorThrown) {
                 console.log('error deleting featurecoord by propertyId')
@@ -751,10 +755,10 @@
         });
     };
 
-    var DelFeatCoorById = function (idFeatureCoord) {
+    var DelFeatCoorById = function () {
         $.ajax({
             type: 'DELETE',
-            url: service + 'featurecoord/delete?id=' + idFeatureCoord,
+            url: service + 'featurecoord/delete?id=' + $("#nextidid").val(),
             dataType: 'json',
             async: false,
             success: function (result) {

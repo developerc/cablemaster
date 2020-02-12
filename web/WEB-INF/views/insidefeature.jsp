@@ -14,7 +14,7 @@
     var arrPropertyId = [];
     var countHalfThreads = 0;
     var arrBetweenInsideConnection = [];
-    var service = 'http://10.152.46.71:8080/';
+    var service = 'http://localhost:8080/';
 
     $(document).ready(function(){
         var idFiber = decodeURIComponent(window.location.search.substring(1));
@@ -23,6 +23,7 @@
         // TrassaById();
         firstBetween(idFiber);
         firstInside(idFiber);
+        getLabels();
         makeTableConnections();
 
         console.log('arrBetweenInsideConnection:');
@@ -30,6 +31,41 @@
             console.log(arrBetweenInsideConnection[i]);
         }
     });
+
+    function getLabels() {
+        for (var i in arrBetweenInsideConnection){
+            if (arrBetweenInsideConnection[i].length > 3) {
+                // console.log('arrBetweenInsideConnection[i][5]=' + arrBetweenInsideConnection[i][5]);
+                $.ajax({
+                    type: 'GET',
+                    url: service + 'featurecoord/get/' + arrBetweenInsideConnection[i][5],
+                    dataType: 'json',
+                    async: false,
+                    success: function (result) {
+                        var stringData = JSON.stringify(result);
+                        // console.log(stringData);
+                        var arrData = JSON.parse(stringData);
+                        var idFeatureCoord = arrData.id;
+                        console.log('idFeatureCoord='+idFeatureCoord);
+                        // var geometryType = arrData.geometryType;
+                        // console.log('geometryType='+geometryType);
+                        // var propertyId = arrData.propertyId;
+                        var label = arrData.label;
+                        console.log('label='+label);
+                        arrBetweenInsideConnection[i].push(label);
+                        // var propertyName = arrData.propertyName;
+                        // console.log('propertyName='+propertyName);
+                        // $("h3").html("Обрабатываем idFeatureCoord=" + idFeatureCoord + ', geometryType='+geometryType + ', label='+label + ', propertyName='+propertyName);
+                        //получим данные по этой Feature
+                        // getConnInsideFeature(sPageURL);
+                    },
+                    error: function (jqXHR, testStatus, errorThrown) {
+                        console.log('error getting featurecoord by propertyId')
+                    }
+                });
+            }
+        }
+    }
 
     function makeTableConnections() {
         trassaTableCableHtml = '';
@@ -40,6 +76,7 @@
         trassaTableCableHtml+= '<th>ID вторая сторона</'+'th>';
         trassaTableCableHtml+= '<th>propertyId</'+'th>';
         trassaTableCableHtml+= '<th>Строка соединения</'+'th>';
+        trassaTableCableHtml+= '<th>Label</'+'th>';
         /*trassaTableCableHtml+= '<th>propertyName или propertyId</'+'th>';
         trassaTableCableHtml+= '<th>цвет модуля</'+'th>';*/
         trassaTableCableHtml+= '</' +'tr>';
@@ -51,6 +88,7 @@
                 trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][2] + '</' + 'th>';
                 trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][5] + '</' + 'th>';
                 trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][6] + '</' + 'th>';
+                trassaTableCableHtml+= '<th>' + arrBetweenInsideConnection[i][7] + '</' + 'th>';
                 /*trassaTableCableHtml+= '<th>' + Data.label + '</' + 'th>';
                 trassaTableCableHtml+= '<th>' + Data.reserved + '</' + 'th>';*/
                 trassaTableCableHtml+= '</' +'tr>';
